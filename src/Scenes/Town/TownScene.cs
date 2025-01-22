@@ -102,4 +102,28 @@ public partial class TownScene : Node2D
 		// TODO: 处理玩家技能
 		GD.Print($"Player Use Skill {skillIndex}!");
 	}
+
+	private void OnBattlePortalEntered()
+	{
+		// 切换到战斗场景
+		var battleScene = GD.Load<PackedScene>("res://scenes/battle/BattleMap.tscn");
+		var battleMap = battleScene.Instantiate<BattleMap>();
+		
+		// 连接战斗完成信号
+		battleMap.BattleCompleted += OnBattleCompleted;
+		
+		// 替换当前场景
+		GetTree().Root.AddChild(battleMap);
+		QueueFree();
+	}
+
+	private void OnBattleCompleted()
+	{
+		// 返回主城
+		var townScene = GD.Load<PackedScene>("res://scenes/town/TownScene.tscn");
+		var town = townScene.Instantiate<TownScene>();
+		
+		GetTree().Root.AddChild(town);
+		QueueFree();
+	}
 } 
