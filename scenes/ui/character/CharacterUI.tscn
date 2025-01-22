@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://bu5hab74vkswi"]
 
 [ext_resource type="Script" path="res://src/UI/Character/CharacterUI.cs" id="1_character"]
 
@@ -156,4 +156,4 @@ anchor_right = 1.0
 offset_left = -40.0
 offset_bottom = 31.0
 grow_horizontal = 0
-text = "X" 
+text = "X"

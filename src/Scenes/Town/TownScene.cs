@@ -10,6 +10,7 @@ public partial class TownScene : Node2D
 	private Control _quickAccessBar;
 	private Control _dialogueSystem;
 	private Control _characterUI;
+	private Control _battleUI;
 
 	public override void _Ready()
 	{
@@ -34,6 +35,18 @@ public partial class TownScene : Node2D
 		_characterUI = characterScene.Instantiate<Control>();
 		GetNode<CanvasLayer>("UI").AddChild(_characterUI);
 		_characterUI.Hide();
+
+		// 加载战斗UI
+		var battleScene = GD.Load<PackedScene>("res://scenes/ui/battle/BattleUI.tscn");
+		_battleUI = battleScene.Instantiate<Control>();
+		GetNode<CanvasLayer>("UI").AddChild(_battleUI);
+
+		// 连接战斗UI信号
+		if (_battleUI is BattleUI battleUI)
+		{
+			battleUI.AttackPressed += OnPlayerAttack;
+			battleUI.SkillPressed += OnPlayerSkill;
+		}
 	}
 
 	public override void _Input(InputEvent @event)
@@ -76,5 +89,17 @@ public partial class TownScene : Node2D
 	private void SetupUI()
 	{
 		// TODO: 设置快捷访问栏
+	}
+
+	private void OnPlayerAttack()
+	{
+		// TODO: 处理玩家攻击
+		GD.Print("Player Attack!");
+	}
+
+	private void OnPlayerSkill(int skillIndex)
+	{
+		// TODO: 处理玩家技能
+		GD.Print($"Player Use Skill {skillIndex}!");
 	}
 } 
