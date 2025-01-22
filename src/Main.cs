@@ -9,13 +9,13 @@ public partial class Main : Node
 
 	public override void _Ready()
 	{
-		// 创建UI
+		// 创建UI（最顶层）
 		CreateUI();
 		
-		// 创建玩家
+		// 创建玩家（中间层）
 		CreatePlayer();
 		
-		// 加载战斗地图
+		// 加载战斗地图（最底层）并初始化
 		LoadBattleMap();
 	}
 
@@ -52,6 +52,9 @@ public partial class Main : Node
 		var battleScene = GD.Load<PackedScene>("res://scenes/battle/BattleMap.tscn");
 		var battleMap = battleScene.Instantiate<BattleMap>();
 		AddChild(battleMap);
+		
+		// 初始化战斗地图
+		battleMap.Initialize(_player, _battleUI);
 	}
 
 	public override void _Input(InputEvent @event)

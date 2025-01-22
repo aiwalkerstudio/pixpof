@@ -6,6 +6,7 @@
 size = Vector2(32, 32)
 
 [node name="Monster1" type="CharacterBody2D"]
+z_index = 1
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_monster")

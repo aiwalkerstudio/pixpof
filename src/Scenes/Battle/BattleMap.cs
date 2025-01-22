@@ -16,9 +16,16 @@ public partial class BattleMap : Node2D
     {
         _monsters = GetNode<Node2D>("Monsters");
         
-        // 获取战斗UI引用
-        _battleUI = GetNode<BattleUI>("/root/Main/UI/BattleUI");
-        
+        // 启用Y-sort，使得物体根据Y坐标自动排序
+        _monsters.YSortEnabled = true;
+    }
+
+    // 新增：由Main调用的初始化方法
+    public void Initialize(Player player, BattleUI battleUI)
+    {
+        _player = player;
+        _battleUI = battleUI;
+
         // 初始化战斗场景
         InitializeBattle();
     }
@@ -36,25 +43,17 @@ public partial class BattleMap : Node2D
     {
         var playerSpawn = GetNode<Marker2D>("SpawnPoints/PlayerSpawn");
         
-        // 使用组查找玩家
-        _player = GetTree().GetFirstNodeInGroup("Player") as Player;
         if (_player != null)
         {
             GD.Print($"BattleMap found player at: {_player.GetPath()}");
             _player.GlobalPosition = playerSpawn.GlobalPosition;
             
-            // 获取战斗UI引用
-            _battleUI = GetNode<BattleUI>("/root/Main/UI/BattleUI");
             if (_battleUI != null)
             {
                 // 连接玩家和战斗UI
                 _battleUI.AttackPressed += _player.OnAttackPressed;
                 _battleUI.SkillPressed += _player.OnSkillPressed;
             }
-        }
-        else
-        {
-            GD.PrintErr("BattleMap could not find player!");
         }
     }
 
