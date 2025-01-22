@@ -1,0 +1,159 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/UI/Character/CharacterUI.cs" id="1_character"]
+
+[node name="CharacterUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_character")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="EquipmentPanel" type="Panel" parent="HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/EquipmentPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="HBoxContainer/EquipmentPanel/VBoxContainer"]
+layout_mode = 2
+text = "装备"
+horizontal_alignment = 1
+
+[node name="WeaponSlot" type="Panel" parent="HBoxContainer/EquipmentPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/EquipmentPanel/VBoxContainer/WeaponSlot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "武器"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ArmorSlot" type="Panel" parent="HBoxContainer/EquipmentPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/EquipmentPanel/VBoxContainer/ArmorSlot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "防具"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatsPanel" type="Panel" parent="HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/StatsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="HBoxContainer/StatsPanel/VBoxContainer"]
+layout_mode = 2
+text = "属性"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="HBoxContainer/StatsPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="HealthLabel" type="Label" parent="HBoxContainer/StatsPanel/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "生命值:"
+
+[node name="HealthValue" type="Label" parent="HBoxContainer/StatsPanel/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "100"
+
+[node name="AttackLabel" type="Label" parent="HBoxContainer/StatsPanel/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "攻击力:"
+
+[node name="AttackValue" type="Label" parent="HBoxContainer/StatsPanel/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "10"
+
+[node name="DefenseLabel" type="Label" parent="HBoxContainer/StatsPanel/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "防御力:"
+
+[node name="DefenseValue" type="Label" parent="HBoxContainer/StatsPanel/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "5"
+
+[node name="InventoryPanel" type="Panel" parent="HBoxContainer"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/InventoryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="HBoxContainer/InventoryPanel/VBoxContainer"]
+layout_mode = 2
+text = "背包"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="HBoxContainer/InventoryPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 5
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 31.0
+grow_horizontal = 0
+text = "X" 
