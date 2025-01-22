@@ -36,11 +36,25 @@ public partial class BattleMap : Node2D
     {
         var playerSpawn = GetNode<Marker2D>("SpawnPoints/PlayerSpawn");
         
-        // 获取已存在的玩家节点或创建新的
+        // 获取已存在的玩家节点
         _player = GetNode<Player>("/root/Main/Player");
         if (_player != null)
         {
+            // 设置玩家位置
             _player.GlobalPosition = playerSpawn.GlobalPosition;
+            
+            // 获取战斗UI引用
+            _battleUI = GetNode<BattleUI>("/root/Main/UI/BattleUI");
+            if (_battleUI != null)
+            {
+                // 连接玩家和战斗UI
+                _battleUI.AttackPressed += _player.OnAttackPressed;
+                _battleUI.SkillPressed += _player.OnSkillPressed;
+            }
+        }
+        else
+        {
+            GD.PrintErr("Player not found!");
         }
     }
 

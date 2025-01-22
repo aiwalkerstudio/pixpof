@@ -27,4 +27,16 @@ public partial class Player : CharacterBody2D
 		Velocity = velocity;
 		MoveAndSlide();
 	}
+
+	public void OnAttackPressed()
+	{
+		// TODO: 实现攻击逻辑
+		GD.Print("Player Attack!");
+	}
+
+	public void OnSkillPressed(int skillIndex)
+	{
+		// TODO: 实现技能逻辑
+		GD.Print($"Player Use Skill {skillIndex}!");
+	}
 } 
