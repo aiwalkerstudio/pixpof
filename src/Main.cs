@@ -12,11 +12,11 @@ public partial class Main : Node
 		// 创建UI
 		CreateUI();
 		
-		// 加载战斗地图
-		LoadBattleMap();
-		
 		// 创建玩家
 		CreatePlayer();
+		
+		// 加载战斗地图
+		LoadBattleMap();
 	}
 
 	private void CreateUI()
@@ -39,7 +39,12 @@ public partial class Main : Node
 	{
 		var playerScene = GD.Load<PackedScene>("res://scenes/player/Player.tscn");
 		_player = playerScene.Instantiate<Player>();
+		// 设置玩家名称以便调试
+		_player.Name = "Player";
 		AddChild(_player);
+		
+		// 调试输出
+		GD.Print($"Player created at: {_player.GetPath()}");
 	}
 
 	private void LoadBattleMap()

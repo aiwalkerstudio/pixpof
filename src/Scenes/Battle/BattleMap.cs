@@ -36,11 +36,11 @@ public partial class BattleMap : Node2D
     {
         var playerSpawn = GetNode<Marker2D>("SpawnPoints/PlayerSpawn");
         
-        // 获取已存在的玩家节点
-        _player = GetNode<Player>("/root/Main/Player");
+        // 使用组查找玩家
+        _player = GetTree().GetFirstNodeInGroup("Player") as Player;
         if (_player != null)
         {
-            // 设置玩家位置
+            GD.Print($"BattleMap found player at: {_player.GetPath()}");
             _player.GlobalPosition = playerSpawn.GlobalPosition;
             
             // 获取战斗UI引用
@@ -54,7 +54,7 @@ public partial class BattleMap : Node2D
         }
         else
         {
-            GD.PrintErr("Player not found!");
+            GD.PrintErr("BattleMap could not find player!");
         }
     }
 
