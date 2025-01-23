@@ -1,133 +1,169 @@
 using Godot;
+using Game.Skills;
 
-public partial class Player : CharacterBody2D
+namespace Game
 {
-	[Export]
-	public float Speed = 300.0f;
-
-	[Export]
-	public float MaxHealth { get; set; } = 100.0f;
-	
-	[Export]
-	public float OnHitSkillThreshold { get; set; } = 10.0f; // 触发受伤技能的伤害阈值
-
-	[Export]
-	public float MaxEnergyShield { get; set; } = 50.0f;
-	
-	private float _currentHealth;
-	private float _currentEnergyShield;
-	private SkillSlot _skillSlot;
-
-	public override void _Ready()
+	public partial class Player : CharacterBody2D
 	{
-		AddToGroup("Player");
-		_currentHealth = MaxHealth;
-		_currentEnergyShield = MaxEnergyShield;
-		
-		// 获取技能槽并添加错误检查
-		_skillSlot = GetNode<SkillSlot>("SkillSlot");
-		if (_skillSlot == null)
-		{
-			GD.PrintErr("SkillSlot node not found! Make sure the SkillSlot node exists in the Player scene.");
-		}
-		else
-		{
-			GD.Print("SkillSlot initialized successfully.");
-		}
-	}
+		[Export]
+		public float Speed = 300.0f;
 
-	public override void _PhysicsProcess(double delta)
-	{
-		Vector2 velocity = Velocity;
-		Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+		[Export]
+		public float MaxHealth { get; set; } = 100.0f;
 		
-		if (direction != Vector2.Zero)
-		{
-			velocity = direction * Speed;
-		}
-		else
-		{
-			velocity = Vector2.Zero;
-		}
+		[Export]
+		public float OnHitSkillThreshold { get; set; } = 10.0f; // 触发受伤技能的伤害阈值
 
-		Velocity = velocity;
-		MoveAndSlide();
-	}
-
-	// 处理受到伤害
-	public void TakeDamage(float damage)
-	{
-		// 优先消耗能量护盾
-		if (_currentEnergyShield > 0)
-		{
-			float shieldDamage = Mathf.Min(damage, _currentEnergyShield);
-			_currentEnergyShield -= shieldDamage;
-			damage -= shieldDamage;
-		}
+		[Export]
+		public float MaxEnergyShield { get; set; } = 50.0f;
 		
-		// 剩余伤害扣除生命值
-		if (damage > 0)
+		private float _currentHealth;
+		private float _currentEnergyShield;
+		private SkillSlot _skillSlot;
+
+		public override void _Ready()
 		{
-			float oldHealth = _currentHealth;
-			_currentHealth = Mathf.Max(0, _currentHealth - damage);
+			AddToGroup("Player");
+			_currentHealth = MaxHealth;
+			_currentEnergyShield = MaxEnergyShield;
 			
-			//GD.Print($"Player受到{damage}点伤害! 血量: {oldHealth} -> {_currentHealth}");
-			
-			// 添加空检查
+			// 获取技能槽并添加错误检查
+			_skillSlot = GetNode<SkillSlot>("SkillSlot");
 			if (_skillSlot == null)
 			{
-				GD.PrintErr("Cannot trigger skill: SkillSlot is null!");
-				return;
-			}
-			
-			// 检查是否触发受伤技能
-			if (damage >= OnHitSkillThreshold)
-			{
-				GD.Print($"伤害({damage})超过阈值({OnHitSkillThreshold})，触发受伤技能!");
-				_skillSlot.OnHit(this);
+				GD.PrintErr("SkillSlot node not found! Make sure the SkillSlot node exists in the Player scene.");
 			}
 			else
 			{
-				//GD.Print($"伤害({damage})未达到阈值({OnHitSkillThreshold})，不触发技能");
-			}
-
-			// 更新UI显示
-			UpdateHealthUI();
-
-			// 检查死亡
-			if (_currentHealth <= 0)
-			{
-				Die();
+				GD.Print("SkillSlot initialized successfully.");
 			}
 		}
-	}
 
-	private void UpdateHealthUI()
-	{
-		// TODO: 更新血量UI显示
-		GD.Print($"Player Health: {_currentHealth}/{MaxHealth}");
-	}
+		public override void _PhysicsProcess(double delta)
+		{
+			Vector2 velocity = Velocity;
+			Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+			
+			if (direction != Vector2.Zero)
+			{
+				velocity = direction * Speed;
+			}
+			else
+			{
+				velocity = Vector2.Zero;
+			}
 
-	private void Die()
-	{
-		// TODO: 处理玩家死亡
-		GD.Print("Player Died!");
-	}
+			Velocity = velocity;
+			MoveAndSlide();
+		}
 
-	public void OnAttackPressed()
-	{
-		// 处理普通攻击
-		GD.Print("Player Attack!");
-	}
+		// 处理受到伤害
+		public void TakeDamage(float damage)
+		{
+			// 优先消耗能量护盾
+			if (_currentEnergyShield > 0)
+			{
+				float shieldDamage = Mathf.Min(damage, _currentEnergyShield);
+				_currentEnergyShield -= shieldDamage;
+				damage -= shieldDamage;
+			}
+			
+			// 剩余伤害扣除生命值
+			if (damage > 0)
+			{
+				float oldHealth = _currentHealth;
+				_currentHealth = Mathf.Max(0, _currentHealth - damage);
+				
+				//GD.Print($"Player受到{damage}点伤害! 血量: {oldHealth} -> {_currentHealth}");
+				
+				// 添加空检查
+				if (_skillSlot == null)
+				{
+					GD.PrintErr("Cannot trigger skill: SkillSlot is null!");
+					return;
+				}
+				
+				// 检查是否触发受伤技能
+				if (damage >= OnHitSkillThreshold)
+				{
+					GD.Print($"伤害({damage})超过阈值({OnHitSkillThreshold})，触发受伤技能!");
+					_skillSlot.OnHit(this);
+				}
+				else
+				{
+					//GD.Print($"伤害({damage})未达到阈值({OnHitSkillThreshold})，不触发技能");
+				}
 
-	public void OnSkillPressed(int skillIndex)
-	{
-		_skillSlot.TriggerSkill(skillIndex, this);
-	}
+				// 更新UI显示
+				UpdateHealthUI();
 
-	public void AddEnergyShield(float amount)
-	{
-		_currentEnergyShield = Mathf.Min(_currentEnergyShield + amount, MaxEnergyShield);
-		GD.Print($"Energy Shield: {_currentEnergyShield}/{MaxEnergyShield}");
+				// 检查死亡
+				if (_currentHealth <= 0)
+				{
+					Die();
+				}
+			}
+
+			// 触发受伤事件
+			_skillSlot?.OnHit(this);
+			
+			GD.Print($"Player受到{damage}点伤害，当前生命值: {_currentHealth}, 能量护盾: {_currentEnergyShield}");
+		}
+
+		private void UpdateHealthUI()
+		{
+			// TODO: 更新血量UI显示
+			GD.Print($"Player Health: {_currentHealth}/{MaxHealth}");
+		}
+
+		private void Die()
+		{
+			// TODO: 处理玩家死亡
+			GD.Print("Player Died!");
+		}
+
+		public void OnAttackPressed()
+		{
+			// 处理普通攻击
+			GD.Print("Player Attack!");
+		}
+
+		public void OnSkillPressed(int skillIndex)
+		{
+			GD.Print($"Player尝试使用技能 {skillIndex}");
+			if (_skillSlot != null)
+			{
+				_skillSlot.TriggerSkill(skillIndex, this);
+			}
+			else
+			{
+				GD.PrintErr("Player的SkillSlot为空!");
+			}
+		}
+
+		public void AddEnergyShield(float amount)
+		{
+			_currentEnergyShield = Mathf.Min(_currentEnergyShield + amount, MaxEnergyShield);
+			GD.Print($"Energy Shield: {_currentEnergyShield}/{MaxEnergyShield}");
+		}
+
+		public override void _Input(InputEvent @event)
+		{
+			if (@event.IsActionPressed("skill_1"))
+			{
+				GD.Print("按下技能1键");
+				OnSkillPressed(0);
+			}
+			else if (@event.IsActionPressed("skill_2"))
+			{
+				GD.Print("按下技能2键");
+				OnSkillPressed(1);
+			}
+			else if (@event.IsActionPressed("skill_3"))
+			{
+				GD.Print("按下技能3键");
+				OnSkillPressed(2);
+			}
+		}
 	}
 } 

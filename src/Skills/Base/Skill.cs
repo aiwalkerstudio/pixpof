@@ -5,12 +5,14 @@ namespace Game.Skills
 {
     public abstract class Skill
     {
-        public virtual string Name { get; protected set; }
+        public abstract string Name { get; protected set; }
         public virtual string Description { get; protected set; }
         public float Cooldown { get; protected set; }
         public float CurrentCooldown { get; protected set; }
         public bool IsPassive { get; protected set; }
-        public virtual SkillTriggerType TriggerType { get; protected set; }
+        public abstract SkillTriggerType TriggerType { get; }
+        public virtual bool HasReservation { get; protected set; } = false;
+        public virtual bool IsChanneling { get; protected set; } = false;
 
         public virtual void Initialize()
         {
@@ -36,5 +38,7 @@ namespace Game.Skills
         {
             CurrentCooldown = Cooldown;
         }
+
+        public virtual void OnDamageTaken(float damage) { }
     }
 } 

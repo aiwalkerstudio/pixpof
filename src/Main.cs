@@ -1,11 +1,13 @@
 using Godot;
 using System;
+using Game;  // 添加这行来引用 Game 命名空间
 
 public partial class Main : Node
 {
-	private Player _player;
+	private Game.Player _player;  // 使用完整的命名空间路径
 	private BattleUI _battleUI;
 	private CharacterUI _characterUI;
+	private Monster _monster;
 
 	public override void _Ready()
 	{
@@ -21,6 +23,20 @@ public partial class Main : Node
 		
 		// 加载战斗地图（最底层）并初始化
 		LoadBattleMap();
+
+		// 获取玩家和怪物实例
+		_player = GetNode<Game.Player>("Player");  // 使用完整的命名空间路径
+		_monster = GetNode<Monster>("Monster");
+
+		if (_player == null)
+		{
+			GD.PrintErr("Player node not found!");
+		}
+
+		if (_monster == null)
+		{
+			GD.PrintErr("Monster node not found!");
+		}
 	}
 
 	private void CreateUI()
@@ -42,7 +58,7 @@ public partial class Main : Node
 	private void CreatePlayer()
 	{
 		var playerScene = GD.Load<PackedScene>("res://scenes/player/Player.tscn");
-		_player = playerScene.Instantiate<Player>();
+		_player = playerScene.Instantiate<Game.Player>();
 		// 设置玩家名称以便调试
 		_player.Name = "Player";
 		AddChild(_player);
@@ -74,5 +90,10 @@ public partial class Main : Node
 				_characterUI.Show();
 			}
 		}
+	}
+
+	public override void _Process(double delta)
+	{
+		// 主场景的逻辑处理
 	}
 } 

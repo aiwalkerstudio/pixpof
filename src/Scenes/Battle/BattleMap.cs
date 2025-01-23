@@ -1,12 +1,13 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using Game;  // 添加这行来引用 Game 命名空间
 
 public partial class BattleMap : Node2D
 {
 	private Node2D _monsters;
 	private List<Monster> _activeMonsters = new();
-	private Player _player;
+	private Game.Player _player;  // 使用完整的命名空间路径
 	private BattleUI _battleUI;
 
 	[Signal]
@@ -21,7 +22,7 @@ public partial class BattleMap : Node2D
 	}
 
 	// 新增：由Main调用的初始化方法
-	public void Initialize(Player player, BattleUI battleUI)
+	public void Initialize(Game.Player player, BattleUI battleUI)  // 修改参数类型
 	{
 		_player = player;
 		_battleUI = battleUI;

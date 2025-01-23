@@ -1,8 +1,8 @@
 using Godot;
 
-namespace Game.Skills
+namespace Game.Skills.Base
 {
-	public abstract class ProjectileSkill : Skill
+	public abstract class ProjectileSkill : ActiveSkill
 	{
 		protected virtual Vector2 GetAimDirection(Node2D source)
 		{
@@ -20,6 +20,17 @@ namespace Game.Skills
 				CreateProjectile(source2D);
 				StartCooldown();
 			}
+		}
+
+		// 添加多重投射相关的虚拟方法
+		public virtual void EnableMultiProjectiles()
+		{
+			// 子类可以重写此方法以支持多重投射
+		}
+
+		public virtual void DisableMultiProjectiles()
+		{
+			// 子类可以重写此方法以支持多重投射
 		}
 	}
 } 
