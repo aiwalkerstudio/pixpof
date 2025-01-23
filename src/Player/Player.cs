@@ -11,13 +11,18 @@ public partial class Player : CharacterBody2D
 	[Export]
 	public float OnHitSkillThreshold { get; set; } = 10.0f; // 触发受伤技能的伤害阈值
 
+	[Export]
+	public float MaxEnergyShield { get; set; } = 50.0f;
+	
 	private float _currentHealth;
+	private float _currentEnergyShield;
 	private SkillSlot _skillSlot;
 
 	public override void _Ready()
 	{
 		AddToGroup("Player");
 		_currentHealth = MaxHealth;
+		_currentEnergyShield = MaxEnergyShield;
 		
 		// 获取技能槽并添加错误检查
 		_skillSlot = GetNode<SkillSlot>("SkillSlot");
@@ -52,36 +57,48 @@ public partial class Player : CharacterBody2D
 	// 处理受到伤害
 	public void TakeDamage(float damage)
 	{
-		float oldHealth = _currentHealth;
-		_currentHealth = Mathf.Max(0, _currentHealth - damage);
-		
-		//GD.Print($"Player受到{damage}点伤害! 血量: {oldHealth} -> {_currentHealth}");
-		
-		// 添加空检查
-		if (_skillSlot == null)
+		// 优先消耗能量护盾
+		if (_currentEnergyShield > 0)
 		{
-			GD.PrintErr("Cannot trigger skill: SkillSlot is null!");
-			return;
+			float shieldDamage = Mathf.Min(damage, _currentEnergyShield);
+			_currentEnergyShield -= shieldDamage;
+			damage -= shieldDamage;
 		}
 		
-		// 检查是否触发受伤技能
-		if (damage >= OnHitSkillThreshold)
+		// 剩余伤害扣除生命值
+		if (damage > 0)
 		{
-			GD.Print($"伤害({damage})超过阈值({OnHitSkillThreshold})，触发受伤技能!");
-			_skillSlot.OnHit(this);
-		}
-		else
-		{
-			//GD.Print($"伤害({damage})未达到阈值({OnHitSkillThreshold})，不触发技能");
-		}
+			float oldHealth = _currentHealth;
+			_currentHealth = Mathf.Max(0, _currentHealth - damage);
+			
+			//GD.Print($"Player受到{damage}点伤害! 血量: {oldHealth} -> {_currentHealth}");
+			
+			// 添加空检查
+			if (_skillSlot == null)
+			{
+				GD.PrintErr("Cannot trigger skill: SkillSlot is null!");
+				return;
+			}
+			
+			// 检查是否触发受伤技能
+			if (damage >= OnHitSkillThreshold)
+			{
+				GD.Print($"伤害({damage})超过阈值({OnHitSkillThreshold})，触发受伤技能!");
+				_skillSlot.OnHit(this);
+			}
+			else
+			{
+				//GD.Print($"伤害({damage})未达到阈值({OnHitSkillThreshold})，不触发技能");
+			}
 
-		// 更新UI显示
-		UpdateHealthUI();
+			// 更新UI显示
+			UpdateHealthUI();
 
-		// 检查死亡
-		if (_currentHealth <= 0)
-		{
-			Die();
+			// 检查死亡
+			if (_currentHealth <= 0)
+			{
+				Die();
+			}
 		}
 	}
 
@@ -106,5 +123,11 @@ public partial class Player : CharacterBody2D
 	public void OnSkillPressed(int skillIndex)
 	{
 		_skillSlot.TriggerSkill(skillIndex, this);
+	}
+
+	public void AddEnergyShield(float amount)
+	{
+		_currentEnergyShield = Mathf.Min(_currentEnergyShield + amount, MaxEnergyShield);
+		GD.Print($"Energy Shield: {_currentEnergyShield}/{MaxEnergyShield}");
 	}
 } 

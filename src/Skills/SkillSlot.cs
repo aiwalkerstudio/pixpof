@@ -12,7 +12,7 @@ public partial class SkillSlot : Node
 		// 默认技能配置
 		slots[0] = new OnHitSkill();
 		slots[1] = new FireballSkill(); 
-		slots[2] = new MultipleProjectileSkill();
+		slots[2] = new SoulRendSkill();
 
 		foreach(var skill in slots)
 		{
