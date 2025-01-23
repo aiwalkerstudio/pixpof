@@ -13,35 +13,61 @@ public partial class FireballSkill : Skill
 		IsPassive = false;
 		TriggerType = SkillTriggerType.Manual;
 		
-		// 加载火球场景
-		_fireballScene = GD.Load<PackedScene>("res://scenes/skills/Fireball.tscn");
+		// 修正场景路径并添加调试信息
+		var scenePath = "res://scenes/skills/Fireball.tscn";
+		GD.Print($"尝试加载火球场景: {scenePath}");
+		
+		_fireballScene = GD.Load<PackedScene>(scenePath);
+		
+		if (_fireballScene == null)
+		{
+			GD.PrintErr($"Failed to load Fireball scene from path: {scenePath}");
+			// 尝试列出可用的场景文件
+			var dir = DirAccess.Open("res://scenes/skills");
+			if (dir != null)
+			{
+				GD.Print("Available files in scenes/skills:");
+				dir.ListDirBegin();
+				var fileName = dir.GetNext();
+				while (fileName != "")
+				{
+					GD.Print($"- {fileName}");
+					fileName = dir.GetNext();
+				}
+			}
+		}
+		else
+		{
+			GD.Print("火球场景加载成功!");
+		}
 	}
 
 	public override void Trigger(Node source)
 	{
 		if (source is Player player)
 		{
+			// 检查场景是否成功加载
+			if (_fireballScene == null)
+			{
+				GD.PrintErr("Fireball scene is null!");
+				return;
+			}
+
 			GD.Print($"开始释放{Name}!");
 			CurrentCooldown = Cooldown;
 
-			// 获取鼠标位置作为目标方向
-			var mousePos = player.GetGlobalMousePosition();
-			var direction = (mousePos - player.GlobalPosition).Normalized();
-
 			// 对于受伤触发，使用最近的怪物作为目标
-			if (source is Player && TriggerType == SkillTriggerType.OnHit)
+			var direction = Vector2.Right; // 默认向右发射
+			
+			var nearestMonster = FindNearestMonster(player);
+			if (nearestMonster != null)
 			{
-				var nearestMonster = FindNearestMonster(player);
-				if (nearestMonster != null)
-				{
-					direction = (nearestMonster.GlobalPosition - player.GlobalPosition).Normalized();
-					GD.Print($"找到最近的怪物，发射方向: {direction}");
-				}
-				else
-				{
-					GD.Print("未找到目标怪物，使用默认方向");
-					direction = Vector2.Right; // 默认向右发射
-				}
+				direction = (nearestMonster.GlobalPosition - player.GlobalPosition).Normalized();
+				GD.Print($"找到最近的怪物，发射方向: {direction}");
+			}
+			else
+			{
+				GD.Print("未找到目标怪物，使用默认方向");
 			}
 
 			if (_isMultishot)
@@ -59,10 +85,32 @@ public partial class FireballSkill : Skill
 
 	private void ShootFireball(Player player, Vector2 position, Vector2 direction)
 	{
+		if (_fireballScene == null)
+		{
+			GD.PrintErr("无法创建火球：场景未加载");
+			return;
+		}
+
+		GD.Print("开始实例化火球...");
 		var fireball = _fireballScene.Instantiate<Fireball>();
-		player.GetParent().AddChild(fireball);
+		
+		if (fireball == null)
+		{
+			GD.PrintErr("火球实例化失败!");
+			return;
+		}
+		
+		GD.Print($"创建火球，位置: {position}, 方向: {direction}");
+		
+		// 添加到当前场景而不是根节点
+		var currentScene = player.GetTree().CurrentScene;
+		currentScene.AddChild(fireball);
+		
 		fireball.GlobalPosition = position;
 		fireball.Initialize(direction, _isMultishot);
+		
+		// 调试信息
+		GD.Print($"火球添加到场景: Parent={fireball.GetParent().Name}, Position={fireball.GlobalPosition}, ZIndex={fireball.ZIndex}");
 	}
 
 	private void ShootMultipleFireballs(Player player, Vector2 position, Vector2 direction)

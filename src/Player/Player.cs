@@ -18,7 +18,17 @@ public partial class Player : CharacterBody2D
 	{
 		AddToGroup("Player");
 		_currentHealth = MaxHealth;
+		
+		// 获取技能槽并添加错误检查
 		_skillSlot = GetNode<SkillSlot>("SkillSlot");
+		if (_skillSlot == null)
+		{
+			GD.PrintErr("SkillSlot node not found! Make sure the SkillSlot node exists in the Player scene.");
+		}
+		else
+		{
+			GD.Print("SkillSlot initialized successfully.");
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -45,7 +55,14 @@ public partial class Player : CharacterBody2D
 		float oldHealth = _currentHealth;
 		_currentHealth = Mathf.Max(0, _currentHealth - damage);
 		
-		GD.Print($"Player受到{damage}点伤害! 血量: {oldHealth} -> {_currentHealth}");
+		//GD.Print($"Player受到{damage}点伤害! 血量: {oldHealth} -> {_currentHealth}");
+		
+		// 添加空检查
+		if (_skillSlot == null)
+		{
+			GD.PrintErr("Cannot trigger skill: SkillSlot is null!");
+			return;
+		}
 		
 		// 检查是否触发受伤技能
 		if (damage >= OnHitSkillThreshold)
@@ -55,7 +72,7 @@ public partial class Player : CharacterBody2D
 		}
 		else
 		{
-			GD.Print($"伤害({damage})未达到阈值({OnHitSkillThreshold})，不触发技能");
+			//GD.Print($"伤害({damage})未达到阈值({OnHitSkillThreshold})，不触发技能");
 		}
 
 		// 更新UI显示

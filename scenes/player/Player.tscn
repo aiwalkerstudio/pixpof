@@ -1,6 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://src/Player/Player.cs" id="1_player"]
+[ext_resource type="Script" path="res://src/Skills/SkillSlot.cs" id="2_skillslot"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p1q2r"]
 size = Vector2(32, 32)
@@ -19,4 +20,7 @@ offset_bottom = 16.0
 color = Color(0.2, 0.6, 1, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_p1q2r") 
+shape = SubResource("RectangleShape2D_p1q2r")
+
+[node name="SkillSlot" type="Node" parent="."]
+script = ExtResource("2_skillslot") 

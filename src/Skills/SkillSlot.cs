@@ -7,6 +7,8 @@ public partial class SkillSlot : Node
 
 	public override void _Ready()
 	{
+		GD.Print("SkillSlot._Ready() called");
+		
 		// 默认技能配置
 		slots[0] = new OnHitSkill();
 		slots[1] = new FireballSkill(); 
@@ -17,6 +19,7 @@ public partial class SkillSlot : Node
 			if(skill != null)
 			{
 				skill.Initialize();
+				GD.Print($"Initialized skill: {skill.Name}");
 			}
 		}
 	}
