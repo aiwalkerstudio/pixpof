@@ -43,14 +43,14 @@ public partial class SkillSlot : Node
 		}
 	}
 
-	public void OnHit()
+	public void OnHit(Player player)
 	{
 		// 触发被动技能
 		foreach(var skill in slots)
 		{
 			if(skill != null && skill.TriggerType == SkillTriggerType.OnHit && skill.CanTrigger())
 			{
-				skill.Trigger(this);
+				skill.Trigger(player);
 			}
 		}
 	}

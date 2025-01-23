@@ -10,10 +10,10 @@ public partial class Monster : CharacterBody2D
     public float MoveSpeed { get; set; } = 100;
 
     [Export]
-    public float AttackDamage { get; set; } = 10;
+    public float AttackDamage { get; set; } = 15.0f;
 
     [Export]
-    public float AttackRange { get; set; } = 50;
+    public float AttackRange { get; set; } = 50.0f;
 
     [Export]
     public float DetectionRange { get; set; } = 200;
@@ -281,5 +281,37 @@ public partial class Monster : CharacterBody2D
             EmitSignal(SignalName.Died, this);
             QueueFree();
         }));
+    }
+
+    public void Attack(Player target)
+    {
+        if (target != null && GlobalPosition.DistanceTo(target.GlobalPosition) <= AttackRange)
+        {
+            GD.Print($"Monster attacks player for {AttackDamage} damage!");
+            target.TakeDamage(AttackDamage);
+        }
+    }
+
+    // 在UpdateAI中调用Attack
+    public void UpdateAI(Player target, float delta)
+    {
+        _target = target;
+        
+        if (_target != null)
+        {
+            var distance = GlobalPosition.DistanceTo(_target.GlobalPosition);
+            
+            if (distance <= AttackRange)
+            {
+                Attack(_target);
+            }
+            else
+            {
+                // 移动向玩家
+                var direction = (_target.GlobalPosition - GlobalPosition).Normalized();
+                Velocity = direction * 100; // 移动速度
+                MoveAndSlide();
+            }
+        }
     }
 } 

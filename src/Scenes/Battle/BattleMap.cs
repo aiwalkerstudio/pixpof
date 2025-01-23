@@ -108,6 +108,9 @@ public partial class BattleMap : Node2D
 
 	private void UpdateMonsterAI(Monster monster, double delta)
 	{
-		// TODO: 实现怪物AI逻辑
+		if (_player != null && monster != null)
+		{
+			monster.UpdateAI(_player, (float)delta);
+		}
 	}
 } 
