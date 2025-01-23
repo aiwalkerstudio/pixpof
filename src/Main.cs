@@ -9,6 +9,10 @@ public partial class Main : Node
 
 	public override void _Ready()
 	{
+		// 初始化翻译系统
+		var translationManager = new TranslationManager();
+		AddChild(translationManager);
+		
 		// 创建UI（最顶层）
 		CreateUI();
 		

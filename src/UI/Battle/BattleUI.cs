@@ -37,8 +37,21 @@ public partial class BattleUI : Control
         _skill1Button.Pressed += () => OnSkillPressed(0);
         _skill2Button.Pressed += () => OnSkillPressed(1);
 
+        // 设置按钮翻译key
+        _attackButton.AddToGroup("Translatable");
+        _attackButton.Set("TranslationKey", "ui_attack");
+        
+        _skill1Button.AddToGroup("Translatable");
+        _skill1Button.Set("TranslationKey", "ui_skill1");
+        
+        _skill2Button.AddToGroup("Translatable");
+        _skill2Button.Set("TranslationKey", "ui_skill2");
+
         // 初始化UI
         InitializeUI();
+
+        // 更新翻译
+        UpdateTranslations();
     }
 
     private void InitializeUI()
@@ -111,5 +124,10 @@ public partial class BattleUI : Control
     private void OnSkillPressed(int skillIndex)
     {
         EmitSignal(SignalName.SkillPressed, skillIndex);
+    }
+
+    private void UpdateTranslations()
+    {
+        GetTree().CallGroup("Translatable", "UpdateTranslation");
     }
 } 

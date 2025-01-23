@@ -27,6 +27,22 @@ public partial class CharacterUI : Control
 
 		// 初始化UI
 		InitializeUI();
+
+		// 设置标签翻译key
+		GetNode<Label>("HBoxContainer/EquipmentPanel/VBoxContainer/Label").Set("TranslationKey", "ui_equipment");
+		GetNode<Label>("HBoxContainer/EquipmentPanel/VBoxContainer/WeaponSlot/Label").Set("TranslationKey", "ui_weapon");
+		GetNode<Label>("HBoxContainer/EquipmentPanel/VBoxContainer/ArmorSlot/Label").Set("TranslationKey", "ui_armor");
+		
+		GetNode<Label>("HBoxContainer/StatsPanel/VBoxContainer/GridContainer/HealthLabel").Set("TranslationKey", "ui_health");
+		GetNode<Label>("HBoxContainer/StatsPanel/VBoxContainer/GridContainer/AttackLabel").Set("TranslationKey", "ui_attack_power");
+		GetNode<Label>("HBoxContainer/StatsPanel/VBoxContainer/GridContainer/DefenseLabel").Set("TranslationKey", "ui_defense");
+		
+		GetNode<Label>("HBoxContainer/InventoryPanel/VBoxContainer/Label").Set("TranslationKey", "ui_inventory");
+		
+		_closeButton.Set("TranslationKey", "ui_close");
+
+		// 更新翻译
+		UpdateTranslations();
 	}
 
 	private void InitializeUI()
@@ -80,5 +96,10 @@ public partial class CharacterUI : Control
 	private void OnArmorSlotGuiInput(InputEvent @event)
 	{
 		// TODO: 处理防具装备槽的输入事件
+	}
+
+	private void UpdateTranslations()
+	{
+		GetTree().CallGroup("Translatable", "UpdateTranslation");
 	}
 } 

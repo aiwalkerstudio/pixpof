@@ -1,0 +1,12 @@
+key,zh_CN,en_US
+ui_attack,攻击,Attack
+ui_skill1,技能1,Skill 1
+ui_skill2,技能2,Skill 2
+ui_health,生命值,Health
+ui_attack_power,攻击力,Attack Power
+ui_defense,防御力,Defense
+ui_inventory,背包,Inventory
+ui_equipment,装备,Equipment
+ui_weapon,武器,Weapon
+ui_armor,防具,Armor
+ui_close,关闭,Close 
