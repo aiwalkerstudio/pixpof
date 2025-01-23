@@ -6,16 +6,18 @@ namespace Game.Skills
     public abstract class Skill
     {
         public abstract string Name { get; protected set; }
-        public virtual string Description { get; protected set; }
-        public float Cooldown { get; protected set; }
-        public float CurrentCooldown { get; protected set; }
-        public bool IsPassive { get; protected set; }
+        public virtual string Description { get; protected set; } = "";
+        public virtual float Cooldown { get; protected set; } = 0f;
+        public float CurrentCooldown { get; protected set; } = 0f;
+        public virtual bool IsPassive { get; protected set; } = false;
         public abstract SkillTriggerType TriggerType { get; }
         public virtual bool HasReservation { get; protected set; } = false;
         public virtual bool IsChanneling { get; protected set; } = false;
+        protected SceneTree SceneTree { get; private set; }
 
         public virtual void Initialize()
         {
+            SceneTree = Engine.GetMainLoop() as SceneTree;
             CurrentCooldown = 0;
         }
 

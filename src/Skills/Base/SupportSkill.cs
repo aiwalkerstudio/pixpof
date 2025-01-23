@@ -1,33 +1,55 @@
 using Godot;
+using System.Collections.Generic;
 
 namespace Game.Skills.Base
 {
-    public abstract class SupportSkill : Skill
-    {
-        public override SkillTriggerType TriggerType => SkillTriggerType.Support;
-        protected Skill[] LinkedSkills { get; set; } = new Skill[0];
-        protected Node Source { get; set; }
+	public abstract class SupportSkill : Skill
+	{
+		public override SkillTriggerType TriggerType => SkillTriggerType.Support;
+		protected List<Skill> LinkedSkills { get; set; } = new();
+		protected Node Source { get; set; }
+		protected Node Owner { get; set; }
 
-        public override void Trigger(Node source)
-        {
-            Source = source;
-        }
-        
-        public virtual void LinkSkill(Skill skill)
-        {
-            if (CanLinkSkill(skill))
-            {
-                var newLinkedSkills = new Skill[LinkedSkills.Length + 1];
-                LinkedSkills.CopyTo(newLinkedSkills, 0);
-                newLinkedSkills[LinkedSkills.Length] = skill;
-                LinkedSkills = newLinkedSkills;
-                GD.Print($"技能 {skill.Name} 已被 {Name} 辅助");
-            }
-        }
-        
-        protected virtual bool CanLinkSkill(Skill skill)
-        {
-            return skill.TriggerType == SkillTriggerType.Active;
-        }
-    }
+		public override void Initialize()
+		{
+			base.Initialize();
+			if (SceneTree != null)
+			{
+				Owner = SceneTree.Root?.GetNode<Node>("/root/Main/Player");
+				if (Owner != null)
+				{
+					Source = Owner;
+				}
+			}
+		}
+
+		public override void Trigger(Node source)
+		{
+			Source = source;
+			Owner = source;
+		}
+
+		public override void OnDamageTaken(float damage)
+		{
+			if (Source == null && Owner != null)
+			{
+				Source = Owner;
+			}
+			base.OnDamageTaken(damage);
+		}
+		
+		public virtual void LinkSkill(Skill skill)
+		{
+			if (CanLinkSkill(skill))
+			{
+				LinkedSkills.Add(skill);
+				GD.Print($"技能 {skill.Name} 已被 {Name} 辅助");
+			}
+		}
+		
+		protected virtual bool CanLinkSkill(Skill skill)
+		{
+			return skill.TriggerType == SkillTriggerType.Active;
+		}
+	}
 } 

@@ -9,7 +9,7 @@ namespace Game
 		public float Speed = 300.0f;
 
 		[Export]
-		public float MaxHealth { get; set; } = 100.0f;
+		public float MaxHealth { get; set; } = 100000.0f;
 		
 		[Export]
 		public float OnHitSkillThreshold { get; set; } = 10.0f; // 触发受伤技能的伤害阈值

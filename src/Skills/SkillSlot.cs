@@ -106,17 +106,14 @@ public partial class SkillSlot : Node
 	public void OnHit(Game.Player player)
 	{
 		GD.Print("SkillSlot.OnHit被调用，开始检查技能...");
-		// 触发被动技能
+		// 触发所有技能的受伤事件
 		foreach(var skill in slots)
 		{
-			if(skill != null)
+			if(skill is SupportSkill)
 			{
 				GD.Print($"检查技能: {skill.Name}, 类型: {skill.GetType().Name}");
-				if(skill is SupportSkill)
-				{
-					GD.Print($"发现辅助技能: {skill.Name}");
-					skill.OnDamageTaken(10f); // 传递伤害值
-				}
+				// 所有技能都可以响应受伤事件，不仅仅是辅助技能
+				skill.OnDamageTaken(10f); // 传递伤害值
 			}
 		}
 	}
