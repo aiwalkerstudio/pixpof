@@ -46,6 +46,7 @@ public partial class Monster : CharacterBody2D
     public override void _Ready()
     {
         _currentHealth = MaxHealth;
+        AddToGroup("Monsters"); // 添加到怪物组
         
         // 寻找玩家目标
         _target = GetPlayer();

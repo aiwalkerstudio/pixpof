@@ -45,10 +45,17 @@ public partial class Player : CharacterBody2D
 		float oldHealth = _currentHealth;
 		_currentHealth = Mathf.Max(0, _currentHealth - damage);
 		
+		GD.Print($"Player受到{damage}点伤害! 血量: {oldHealth} -> {_currentHealth}");
+		
 		// 检查是否触发受伤技能
 		if (damage >= OnHitSkillThreshold)
 		{
+			GD.Print($"伤害({damage})超过阈值({OnHitSkillThreshold})，触发受伤技能!");
 			_skillSlot.OnHit(this);
+		}
+		else
+		{
+			GD.Print($"伤害({damage})未达到阈值({OnHitSkillThreshold})，不触发技能");
 		}
 
 		// 更新UI显示

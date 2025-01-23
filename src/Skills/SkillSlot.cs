@@ -45,12 +45,18 @@ public partial class SkillSlot : Node
 
 	public void OnHit(Player player)
 	{
+		GD.Print("SkillSlot.OnHit被调用，开始检查技能...");
 		// 触发被动技能
 		foreach(var skill in slots)
 		{
-			if(skill != null && skill.TriggerType == SkillTriggerType.OnHit && skill.CanTrigger())
+			if(skill != null)
 			{
-				skill.Trigger(player);
+				GD.Print($"检查技能: {skill.Name}, 类型: {skill.TriggerType}, 是否可触发: {skill.CanTrigger()}");
+				if(skill.TriggerType == SkillTriggerType.OnHit && skill.CanTrigger())
+				{
+					GD.Print($"触发技能: {skill.Name}");
+					skill.Trigger(player);
+				}
 			}
 		}
 	}
