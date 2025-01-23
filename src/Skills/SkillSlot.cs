@@ -54,4 +54,10 @@ public partial class SkillSlot : Node
 			}
 		}
 	}
+
+	// 获取所有技能
+	public Skill[] GetSkills()
+	{
+		return slots;
+	}
 } 
