@@ -1,7 +1,8 @@
 using Godot;
 using System.Collections.Generic;
+using Game.Enemies; // 假设Enemy在这个命名空间
 
-public class SoulRendProjectile : Area2D
+public partial class SoulRendProjectile : Area2D
 {
     public float Speed { get; set; }
     public float Damage { get; set; }

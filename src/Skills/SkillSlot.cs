@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Game.Skills;
 
 public partial class SkillSlot : Node
 {
