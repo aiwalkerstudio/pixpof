@@ -6,7 +6,7 @@ using Game;
 
 namespace Game.Skills.Active
 {
-	public partial class SoulRendSkill : ProjectileSkill
+	public partial class Soulrend : ProjectileSkill
 	{
 		private bool _isMultishot = false;
 		private const float PROJECTILE_SPEED = 300f;

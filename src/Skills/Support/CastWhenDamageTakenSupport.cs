@@ -3,7 +3,7 @@ using Game.Skills.Base;
 
 namespace Game.Skills.Support
 {
-    public class CastOnDamageTakenSupport : SupportSkill
+    public class CastWhenDamageTakenSupport : SupportSkill
     {
         public override string Name { get; protected set; } = "受伤时施放";
         private float _damageAccumulated = 0;
@@ -12,7 +12,7 @@ namespace Game.Skills.Support
         public override void Initialize()
         {
             base.Initialize();
-            Cooldown = 0.001f; // 触发冷却
+            Cooldown = 0.25f; // 触发冷却
         }
 
         public override void OnDamageTaken(float damage)

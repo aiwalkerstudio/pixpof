@@ -20,19 +20,22 @@ public partial class SkillSlot : Node
 		try
 		{
 			// 创建技能
-			var castOnDamageTaken = new Game.Skills.Support.CastOnDamageTakenSupport();
-			var multipleProjectiles = new Game.Skills.Support.LesserMultipleProjectilesSupport();
-			var soulRend = new Game.Skills.Active.SoulRendSkill();
-			var fireball = new Game.Skills.Active.FireballSkill();
-			
+			var castWhenDamageTakenSupport = new Game.Skills.Support.CastWhenDamageTakenSupport();
+			var lesserMultipleProjectilesSupport = new Game.Skills.Support.LesserMultipleProjectilesSupport();
+			var soulrend = new Game.Skills.Active.Soulrend();
+			var fireball = new Game.Skills.Active.Fireball();
+
 			// 设置技能链接
-			soulRend.AddSupport(multipleProjectiles);
-			fireball.AddSupport(castOnDamageTaken);
+			// soulrend.AddSupport(castWhenDamageTakenSupport);
+			// soulrend.AddSupport(lesserMultipleProjectilesSupport);
+
+			fireball.AddSupport(castWhenDamageTakenSupport);
+			fireball.AddSupport(lesserMultipleProjectilesSupport);
 			
 			// 配置技能槽
-			slots[0] = castOnDamageTaken;
-			slots[1] = soulRend;
-			slots[2] = multipleProjectiles;
+			slots[0] = castWhenDamageTakenSupport;
+			slots[1] = soulrend;
+			slots[2] = lesserMultipleProjectilesSupport;
 			
 			// 初始化所有技能
 			foreach (var skill in slots)

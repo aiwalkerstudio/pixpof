@@ -5,7 +5,7 @@ using Game.Enemies;
 
 namespace Game.Skills.Active
 {
-	public partial class FireballSkill : ProjectileSkill
+	public partial class Fireball : ProjectileSkill
 	{
 		private bool _isMultishot = false;
 		private const float PROJECTILE_SPEED = 300f;
@@ -15,7 +15,7 @@ namespace Game.Skills.Active
 		
 		public override string Name { get; protected set; } = "火球术";
 
-		private partial class Fireball : Area2D
+		private partial class FireballProjectile : Area2D
 		{
 			[Export]
 			public float Speed { get; set; } = 300.0f;
@@ -138,9 +138,9 @@ namespace Game.Skills.Active
 			}
 		}
 
-		private Fireball CreateFireballProjectile(Node2D source)
+		private FireballProjectile CreateFireballProjectile(Node2D source)
 		{
-			var projectile = new Fireball
+			var projectile = new FireballProjectile
 			{
 				Speed = PROJECTILE_SPEED,
 				Damage = DAMAGE,
