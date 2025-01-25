@@ -16,61 +16,69 @@
 /.godot # Godot配置文件
 /addons # 插件目录
 /src # C#源代码
-/Core # 核心游戏逻辑
-/Combat # 战斗系统
-/Skills # 技能系统
-/Items # 物品系统
-/Stats # 属性系统
-/Scenes # 场景相关代码
-/Main # 主场景逻辑
-/Battle # 战斗场景逻辑
-/UI # UI相关代码
-/Components # UI组件
-/HUD # 战斗界面
-/Utils # 工具类
-/Extensions # 扩展方法
-/Helpers # 辅助函数
-/assets # 游戏资源
-  /i18n # 国际化资源
-    /translations # 翻译文件
-      /source # 源文本文件
-        ui.csv # UI文本
-        items.csv # 物品描述
-        skills.csv # 技能描述
-        dialogs.csv # 对话文本
-      /compiled # 编译后的翻译文件
-        zh_CN.translation # 简体中文
-        en_US.translation # 英语(美国)
-        ja_JP.translation # 日语
-    /localized_assets # 本地化资源
-      /audio # 配音文件
-        /zh_CN
-        /en_US
-        /ja_JP
-      /images # 本地化图片
-        /zh_CN
-        /en_US
-        /ja_JP
-    /tools # 本地化工具
-      translation_sync.sh # 翻译同步工具
-      csv_validator.py # CSV格式检查
-      translation_compiler.py # 翻译文件编译
-/scenes # 场景文件(.tscn)
-/sprites # 精灵图
-/audio # 音频文件
-/themes # UI主题
-/resources # Godot资源文件(.tres)
-/items # 物品配置
-/skills # 技能配置
-/platform # 平台特定代码
-/mobile # 移动端适配
-/desktop # 桌面端适配
-/build # 构建输出目录
-/config # 配置文件目录
-  pixpof.csproj # C#项目配置
-  project.godot # Godot项目配置
-  .gitignore # Git忽略配置
-  .gitattributes # Git属性配置
+  /Core # 核心游戏逻辑
+  /Combat # 战斗系统
+  /Skills # 技能系统
+  /Items # 物品系统
+  /Stats # 属性系统
+  /Scenes # 场景相关代码
+  /Main # 主场景逻辑
+  /Battle # 战斗场景逻辑
+  /UI # UI相关代码
+  /Components # UI组件
+  /HUD # 战斗界面
+  /Utils # 工具类
+  /Extensions # 扩展方法
+  /Helpers # 辅助函数
+  /assets # 游戏资源
+    /i18n # 国际化资源
+      /translations # 翻译文件
+        /source # 源文本文件
+          ui.csv # UI文本
+          items.csv # 物品描述
+          skills.csv # 技能描述
+          dialogs.csv # 对话文本
+        /compiled # 编译后的翻译文件
+          zh_CN.translation # 简体中文
+          en_US.translation # 英语(美国)
+          ja_JP.translation # 日语
+      /localized_assets # 本地化资源
+        /audio # 配音文件
+          /zh_CN
+          /en_US
+          /ja_JP
+        /images # 本地化图片
+          /zh_CN
+          /en_US
+          /ja_JP
+      /tools # 本地化工具
+        translation_sync.sh # 翻译同步工具
+        csv_validator.py # CSV格式检查
+        translation_compiler.py # 翻译文件编译
+  /scenes # 场景文件(.tscn)
+  /sprites # 精灵图
+  /audio # 音频文件
+  /themes # UI主题
+  /resources # Godot资源文件(.tres)
+  /items # 物品配置
+  /skills # 技能配置
+  /platform # 平台特定代码
+  /mobile # 移动端适配
+  /desktop # 桌面端适配
+  /build # 构建输出目录
+  /config # 配置文件目录
+    pixpof.csproj # C#项目配置
+    project.godot # Godot项目配置
+    .gitignore # Git忽略配置
+    .gitattributes # Git属性配置
+  /Tests/
+    Unit/           # 单元测试
+      Combat/       # 战斗相关测试
+      Skills/       # 技能相关测试
+      Items/        # 物品相关测试
+    Integration/    # 集成测试
+    Performance/    # 性能测试
+    TestHelpers/    # 测试辅助类
 
 ## 核心系统
 
