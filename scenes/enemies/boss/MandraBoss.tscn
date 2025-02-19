@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/Enemies/Boss/MandraBoss.cs" id="1_mandra"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_boss"]
+radius = 32.0
+
+[node name="MandraBoss" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_mandra")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_boss")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+color = Color(0.8, 0.2, 0.8, 1.0)
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -40.0
+offset_top = -45.0
+offset_right = 40.0
+offset_bottom = -40.0
+value = 100.0
+show_percentage = false 

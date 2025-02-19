@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://src/UI/Battle/BattleUI.cs" id="1_battle"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health"]
-bg_color = Color(0.8, 0.2, 0.2, 1.0)
+bg_color = Color(0.8, 0.2, 0.2, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana"]
-bg_color = Color(0.2, 0.2, 0.8, 1.0)
+bg_color = Color(0.2, 0.2, 0.8, 1)
 
 [node name="BattleUI" type="Control"]
 layout_mode = 3
@@ -51,7 +51,6 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -100.0
-offset_top = 0.0
 offset_right = 100.0
 offset_bottom = 15.0
 grow_horizontal = 2

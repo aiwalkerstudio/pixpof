@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Game;  // 添加这行来引用 Game 命名空间
+using Game.Enemies.Boss;  // 添加这行来引用 MandraBoss
 
 public partial class BattleMap : Node2D
 {
@@ -9,6 +10,7 @@ public partial class BattleMap : Node2D
 	private List<Monster> _activeMonsters = new();
 	private Game.Player _player;  // 使用完整的命名空间路径
 	private BattleUI _battleUI;
+	private MandraBoss _boss; // 现在可以识别 MandraBoss 类型
 
 	[Signal]
 	public delegate void BattleCompletedEventHandler();
@@ -33,11 +35,44 @@ public partial class BattleMap : Node2D
 
 	private void InitializeBattle()
 	{
-		// 生成玩家
-		SpawnPlayer();
-		
-		// 生成怪物
-		SpawnMonsters();
+		try
+		{
+			// 生成玩家
+			SpawnPlayer();
+			
+			// 生成怪物
+			SpawnMonsters();
+
+			// 加载Boss场景
+			var bossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
+			if (bossScene != null)
+			{
+				_boss = bossScene.Instantiate<MandraBoss>();
+				
+				// 设置Boss位置 (使用BossSpawn点的位置)
+				var bossSpawn = GetNode<Marker2D>("SpawnPoints/BossSpawn");
+				if (bossSpawn != null)
+				{
+					_boss.GlobalPosition = bossSpawn.GlobalPosition;
+				}
+				else
+				{
+					// 如果找不到生成点，使用默认位置
+					_boss.GlobalPosition = new Vector2(800, 300);
+				}
+				
+				_monsters.AddChild(_boss);
+				GD.Print("Boss spawned successfully");
+			}
+			else
+			{
+				GD.PrintErr("Failed to load Boss scene!");
+			}
+		}
+		catch (Exception e)
+		{
+			GD.PrintErr($"Error spawning boss: {e.Message}\n{e.StackTrace}");
+		}
 	}
 
 	private void SpawnPlayer()
@@ -113,5 +148,11 @@ public partial class BattleMap : Node2D
 		{
 			monster.UpdateAI(_player, (float)delta);
 		}
+	}
+
+	public void OnBossDefeated()
+	{
+		// 处理Boss被击败的逻辑
+		EmitSignal(SignalName.BattleCompleted);
 	}
 } 
