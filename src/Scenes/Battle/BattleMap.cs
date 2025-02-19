@@ -95,25 +95,97 @@ public partial class BattleMap : Node2D
 
 	private void SpawnMonsters()
 	{
-		// 生成普通怪物
-		SpawnMonster("Monster1", "SpawnPoints/MonsterSpawn1");
-		SpawnMonster("Monster1", "SpawnPoints/MonsterSpawn2");
-		
-		// TODO: 根据战斗进度生成BOSS
+		// 生成多个普通怪物
+		var monsterSpawns = new List<(string type, Vector2 position)>
+		{
+			("Monster1", new Vector2(300, 200)),  // 左上
+			("Monster1", new Vector2(300, 400)),  // 左下
+			("Monster1", new Vector2(700, 200)),  // 右上
+			("Monster1", new Vector2(700, 400)),  // 右下
+			("Monster1", new Vector2(500, 150)),  // 上中
+			("Monster1", new Vector2(500, 450)),  // 下中
+		};
+
+		foreach (var spawn in monsterSpawns)
+		{
+			SpawnMonsterAtPosition(spawn.type, spawn.position);
+		}
+
+		// 随机生成额外的怪物
+		for (int i = 0; i < 3; i++)  // 随机生成3个额外的怪物
+		{
+			float x = (float)GD.RandRange(200, 800);
+			float y = (float)GD.RandRange(150, 450);
+			SpawnMonsterAtPosition("Monster1", new Vector2(x, y));
+		}
 	}
 
-	private void SpawnMonster(string monsterType, string spawnPointPath)
+	private void SpawnMonsterAtPosition(string monsterType, Vector2 position)
 	{
-		var spawnPoint = GetNode<Marker2D>(spawnPointPath);
-		var monsterScene = GD.Load<PackedScene>($"res://scenes/monsters/{monsterType}.tscn");
-		var monster = monsterScene.Instantiate<Monster>();
+		try
+		{
+			var monsterScene = GD.Load<PackedScene>($"res://scenes/monsters/{monsterType}.tscn");
+			if (monsterScene != null)
+			{
+				var monster = monsterScene.Instantiate<Monster>();
+				monster.GlobalPosition = position;
+				_monsters.AddChild(monster);
+				_activeMonsters.Add(monster);
+				
+				// 连接怪物信号
+				monster.Died += OnMonsterDied;
+				
+				GD.Print($"Spawned {monsterType} at position {position}");
+			}
+			else
+			{
+				GD.PrintErr($"Failed to load monster scene: {monsterType}");
+			}
+		}
+		catch (Exception e)
+		{
+			GD.PrintErr($"Error spawning monster {monsterType}: {e.Message}");
+		}
+	}
+
+	// 添加一个方法来检查位置是否合适
+	private bool IsValidSpawnPosition(Vector2 position)
+	{
+		// 检查与其他怪物的距离
+		foreach (var monster in _activeMonsters)
+		{
+			if (monster.GlobalPosition.DistanceTo(position) < 50)  // 最小间距
+			{
+				return false;
+			}
+		}
 		
-		monster.GlobalPosition = spawnPoint.GlobalPosition;
-		_monsters.AddChild(monster);
-		_activeMonsters.Add(monster);
+		// 检查与玩家的距离
+		if (_player != null && _player.GlobalPosition.DistanceTo(position) < 100)  // 与玩家保持距离
+		{
+			return false;
+		}
 		
-		// 连接怪物信号
-		monster.Died += OnMonsterDied;
+		return true;
+	}
+
+	// 获取随机生成位置
+	private Vector2 GetRandomSpawnPosition()
+	{
+		for (int i = 0; i < 10; i++)  // 最多尝试10次
+		{
+			float x = (float)GD.RandRange(200, 800);
+			float y = (float)GD.RandRange(150, 450);
+			Vector2 position = new Vector2(x, y);
+			
+			if (IsValidSpawnPosition(position))
+			{
+				return position;
+			}
+		}
+		
+		// 如果找不到合适的位置，返回一个默认位置
+		return new Vector2(500, 300);
 	}
 
 	private void OnMonsterDied(Monster monster)
