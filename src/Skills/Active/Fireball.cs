@@ -100,6 +100,7 @@ namespace Game.Skills.Active
 		{
 			base.Initialize();
 			Cooldown = 1.0f;
+			ManaCost = 20f;
 			Description = "发射一颗火球，对敌人造成火焰伤害";
 		}
 

@@ -41,18 +41,49 @@ public partial class Main : Node
 
 	private void CreateUI()
 	{
+		// 确保UI层存在
 		var uiNode = GetNode<CanvasLayer>("UI");
+		if (uiNode == null)
+		{
+			GD.PrintErr("UI CanvasLayer not found! Creating one...");
+			uiNode = new CanvasLayer();
+			uiNode.Name = "UI";
+			AddChild(uiNode);
+		}
 		
-		// 加载战斗UI
-		var battleUIScene = GD.Load<PackedScene>("res://scenes/ui/battle/BattleUI.tscn");
-		_battleUI = battleUIScene.Instantiate<BattleUI>();
-		uiNode.AddChild(_battleUI);
-		
-		// 加载角色UI
-		var characterUIScene = GD.Load<PackedScene>("res://scenes/ui/character/CharacterUI.tscn");
-		_characterUI = characterUIScene.Instantiate<CharacterUI>();
-		uiNode.AddChild(_characterUI);
-		_characterUI.Hide();
+		try
+		{
+			// 加载战斗UI
+			var battleUIScene = GD.Load<PackedScene>("res://scenes/ui/battle/BattleUI.tscn");
+			if (battleUIScene != null)
+			{
+				_battleUI = battleUIScene.Instantiate<BattleUI>();
+				uiNode.AddChild(_battleUI);
+				GD.Print("BattleUI created successfully");
+			}
+			else
+			{
+				GD.PrintErr("Failed to load BattleUI scene!");
+			}
+			
+			// 加载角色UI
+			var characterUIScene = GD.Load<PackedScene>("res://scenes/ui/character/CharacterUI.tscn");
+			if (characterUIScene != null)
+			{
+				_characterUI = characterUIScene.Instantiate<CharacterUI>();
+				uiNode.AddChild(_characterUI);
+				_characterUI.Hide();
+				GD.Print("CharacterUI created successfully");
+			}
+			else
+			{
+				GD.PrintErr("Failed to load CharacterUI scene!");
+			}
+		}
+		catch (Exception e)
+		{
+			GD.PrintErr($"Error creating UI: {e.Message}\n{e.StackTrace}");
+		}
 	}
 
 	private void CreatePlayer()

@@ -17,8 +17,13 @@ namespace Game
 		[Export]
 		public float MaxEnergyShield { get; set; } = 50.0f;
 		
+		[Export]
+		public float MaxMana { get; set; } = 100.0f;  // 最大魔法值
+		
 		private float _currentHealth;
 		private float _currentEnergyShield;
+		private float _currentMana;  // 当前魔法值
+		private float _manaRegenRate = 5.0f;  // 每秒魔法恢复速度
 		private SkillSlot _skillSlot;
 
 		public override void _Ready()
@@ -26,6 +31,7 @@ namespace Game
 			AddToGroup("Player");
 			_currentHealth = MaxHealth;
 			_currentEnergyShield = MaxEnergyShield;
+			_currentMana = MaxMana;  // 初始化魔法值
 			
 			// 获取技能槽并添加错误检查
 			_skillSlot = GetNode<SkillSlot>("SkillSlot");
@@ -55,6 +61,42 @@ namespace Game
 
 			Velocity = velocity;
 			MoveAndSlide();
+		}
+
+		public override void _Process(double delta)
+		{
+			// 魔法值自动恢复
+			RegenerateMana((float)delta);
+			
+			// 更新UI显示
+			UpdateUI();
+		}
+
+		private void RegenerateMana(float delta)
+		{
+			_currentMana = Mathf.Min(_currentMana + _manaRegenRate * delta, MaxMana);
+		}
+
+		public bool ConsumeMana(float amount)
+		{
+			if (_currentMana >= amount)
+			{
+				_currentMana -= amount;
+				UpdateUI();
+				return true;
+			}
+			return false;
+		}
+
+		private void UpdateUI()
+		{
+			// 获取BattleUI实例
+			var battleUI = GetNode<BattleUI>("/root/Main/UI/BattleUI");
+			if (battleUI != null)
+			{
+				battleUI.UpdateHealth(_currentHealth, MaxHealth);
+				battleUI.UpdateMana(_currentMana, MaxMana);  // 更新魔法值显示
+			}
 		}
 
 		// 处理受到伤害
