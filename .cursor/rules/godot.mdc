@@ -1,0 +1,40 @@
+---
+description: godot
+globs: *.cs
+---
+# Godot Rules
+  
+## File Creation Rules
+ 
+### Check Duplicate Files
+ 
+ Before creating a new file, check for files with the same name in:
+ - Parent directory (../)
+ - Current directory (./)
+ - All immediate subdirectories (*//)
+ 
+ If duplicate files are found:
+ 1. Show a list of found duplicate files
+ 2. Ask user whether to:
+    - Use an existing file
+    - Create new file anyway
+ 
+ ```rule
+ {
+     "type": "pre_creation",
+     "check": {
+         "paths": ["../", "./", "*/"],
+         "pattern": "${filename}"
+     },
+     "on_found": {
+         "action": "prompt",
+         "message": "Found duplicate file(s): ${files}\nUse existing file?",
+         "options": [
+             {"label": "Use Existing", "action": "use_existing"},
+             {"label": "Create New", "action": "continue"}
+         ]
+     }
+ }
+ ```
+  
+## Scene Rules
