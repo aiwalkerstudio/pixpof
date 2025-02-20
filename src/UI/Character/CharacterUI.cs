@@ -10,9 +10,34 @@ public partial class CharacterUI : Control
 	private GridContainer _inventoryGrid;
 	private Panel _weaponSlot;
 	private Panel _armorSlot;
+	private Label _goldLabel;
+	private Game.Player _player;
 
 	public override void _Ready()
 	{
+		GD.Print("CharacterUI initializing...");
+		
+		// 尝试不同的路径查找 GoldLabel
+		_goldLabel = GetNode<Label>("GoldLabel");
+		if (_goldLabel == null)
+		{
+			_goldLabel = GetNode<Label>("HBoxContainer/GoldLabel");
+			if (_goldLabel == null)
+			{
+				_goldLabel = GetNode<Label>("TopBar/GoldLabel");
+				if (_goldLabel == null)
+				{
+					GD.PrintErr("GoldLabel node not found! Tried paths:");
+					GD.PrintErr("- GoldLabel");
+					GD.PrintErr("- HBoxContainer/GoldLabel");
+					GD.PrintErr("- TopBar/GoldLabel");
+					GD.PrintErr("Current node path: " + GetPath());
+					return;
+				}
+			}
+		}
+		GD.Print("Found GoldLabel at: " + _goldLabel.GetPath());
+		
 		// 获取节点引用
 		_healthValue = GetNode<Label>("HBoxContainer/StatsPanel/VBoxContainer/GridContainer/HealthValue");
 		_attackValue = GetNode<Label>("HBoxContainer/StatsPanel/VBoxContainer/GridContainer/AttackValue");
@@ -43,6 +68,23 @@ public partial class CharacterUI : Control
 
 		// 更新翻译
 		UpdateTranslations();
+
+		// 获取玩家引用
+		_player = GetNode<Game.Player>("/root/Main/Player");
+		if (_player != null)
+		{
+			// 连接金币变化信号
+			_player.GoldChanged += OnGoldChanged;
+			GD.Print("Connected to player's GoldChanged signal");
+			
+			// 立即更新显示
+			OnGoldChanged(_player.Gold);
+			GD.Print($"Initial gold display updated: {_player.Gold}");
+		}
+		else
+		{
+			GD.PrintErr("Failed to find player node!");
+		}
 	}
 
 	private void InitializeUI()
@@ -101,5 +143,18 @@ public partial class CharacterUI : Control
 	private void UpdateTranslations()
 	{
 		GetTree().CallGroup("Translatable", "UpdateTranslation");
+	}
+
+	private void OnGoldChanged(int newAmount)
+	{
+		if (_goldLabel != null)
+		{
+			_goldLabel.Text = $"Gold: {newAmount}";
+			GD.Print($"CharacterUI updated gold display: {newAmount}");
+		}
+		else
+		{
+			GD.PrintErr("GoldLabel is null!");
+		}
 	}
 } 

@@ -17,6 +17,9 @@ namespace Game.Skills.Active
 		private const float AREA_DAMAGE_RADIUS = 50f;
 		private const int MULTISHOT_COUNT = 3;
 		private const float MULTISHOT_ANGLE = 15f;
+		private float _damage = 25.0f;  // 基础伤害
+		private float _dotDuration = 3.0f;  // 持续时间
+		private float _range = 150.0f;  // 攻击范围
 
 		public override string Name { get; protected set; } = "裂魂术";
 
@@ -172,7 +175,7 @@ namespace Game.Skills.Active
 		public override void Initialize()
 		{
 			base.Initialize();
-			Cooldown = 1.0f;
+			Cooldown = 2.0f;  // 冷却时间
 			Description = "发射追踪灵魂投射物，造成伤害和持续伤害";
 		}
 
@@ -236,6 +239,55 @@ namespace Game.Skills.Active
 		{
 			_isMultishot = false;
 			GD.Print("裂魂术: 关闭多重投射模式");
+		}
+
+		protected override void OnTrigger(Node source)
+		{
+			base.OnTrigger(source);  // 调用基类方法
+			
+			if (source is Game.Player player)
+			{
+				// 获取鼠标位置作为目标点
+				var mousePos = player.GetGlobalMousePosition();
+				GD.Print($"Casting Soulrend at {mousePos}");
+
+				// 检测范围内的敌人
+				var spaceState = player.GetWorld2D().DirectSpaceState;
+				var query = new PhysicsShapeQueryParameters2D();
+				var shape = new CircleShape2D();
+				shape.Radius = _range;
+				query.Shape = shape;
+				query.Transform = new Transform2D(0, mousePos);
+				query.CollisionMask = 4;  // 敌人的碰撞层
+
+				var results = spaceState.IntersectShape(query);
+				foreach (var result in results)
+				{
+					var collider = result["collider"].As<Node2D>();
+					if (collider is Monster monster)  // 注意这里用Monster而不是Enemy
+					{
+						GD.Print($"Soulrend hits monster at {monster.GlobalPosition}");
+						monster.TakeDamage(_damage);  // 直接伤害
+						monster.ApplyDotDamage(DOT_DAMAGE, _dotDuration);  // 持续伤害
+					}
+				}
+
+				// 播放特效
+				PlaySoulrendEffect(mousePos);
+			}
+		}
+
+		private void PlaySoulrendEffect(Vector2 position)
+		{
+			var effect = new ColorRect();
+			effect.Color = new Color(0.5f, 0, 1, 0.7f);  // 紫色
+			effect.Size = new Vector2(_range * 2, _range * 2);
+			effect.Position = position - effect.Size / 2;
+			Source.GetTree().CurrentScene.AddChild(effect);
+
+			var tween = Source.CreateTween();
+			tween.TweenProperty(effect, "modulate:a", 0.0f, 0.5f);
+			tween.TweenCallback(Callable.From(() => effect.QueueFree()));
 		}
 	}
 } 

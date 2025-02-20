@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using Game;  // 添加这行来引用 Game 命名空间
 using Game.Enemies.Boss;  // 添加这行来引用 MandraBoss
+using Game.Enemies;  // Monster 类在这个命名空间下
+using System.Linq;
+using Game.UI.Battle;  // 添加命名空间引用
 
 public partial class BattleMap : Node2D
 {
@@ -44,30 +47,30 @@ public partial class BattleMap : Node2D
 			SpawnMonsters();
 
 			// 加载Boss场景
-			var bossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
-			if (bossScene != null)
-			{
-				_boss = bossScene.Instantiate<MandraBoss>();
+			// var bossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
+			// if (bossScene != null)
+			// {
+			// 	_boss = bossScene.Instantiate<MandraBoss>();
 				
-				// 设置Boss位置 (使用BossSpawn点的位置)
-				var bossSpawn = GetNode<Marker2D>("SpawnPoints/BossSpawn");
-				if (bossSpawn != null)
-				{
-					_boss.GlobalPosition = bossSpawn.GlobalPosition;
-				}
-				else
-				{
-					// 如果找不到生成点，使用默认位置
-					_boss.GlobalPosition = new Vector2(800, 300);
-				}
+			// 	// 设置Boss位置 (使用BossSpawn点的位置)
+			// 	var bossSpawn = GetNode<Marker2D>("SpawnPoints/BossSpawn");
+			// 	if (bossSpawn != null)
+			// 	{
+			// 		_boss.GlobalPosition = bossSpawn.GlobalPosition;
+			// 	}
+			// 	else
+			// 	{
+			// 		// 如果找不到生成点，使用默认位置
+			// 		_boss.GlobalPosition = new Vector2(800, 300);
+			// 	}
 				
-				_monsters.AddChild(_boss);
-				GD.Print("Boss spawned successfully");
-			}
-			else
-			{
-				GD.PrintErr("Failed to load Boss scene!");
-			}
+			// 	_monsters.AddChild(_boss);
+			// 	GD.Print("Boss spawned successfully");
+			// }
+			// else
+			// {
+			// 	GD.PrintErr("Failed to load Boss scene!");
+			// }
 		}
 		catch (Exception e)
 		{
@@ -188,14 +191,18 @@ public partial class BattleMap : Node2D
 		return new Vector2(500, 300);
 	}
 
-	private void OnMonsterDied(Monster monster)
+	private void OnMonsterDied(Enemy enemy)
 	{
-		_activeMonsters.Remove(monster);
-		
-		// 检查战斗是否结束
-		if (_activeMonsters.Count == 0)
+		// 类型转换
+		if (enemy is Monster monster)
 		{
-			EmitSignal(SignalName.BattleCompleted);
+			_activeMonsters.Remove(monster);
+			
+			// 检查战斗是否结束
+			if (_activeMonsters.Count == 0)
+			{
+				EmitSignal(SignalName.BattleCompleted);
+			}
 		}
 	}
 
@@ -207,10 +214,14 @@ public partial class BattleMap : Node2D
 
 	private void UpdateBattle(double delta)
 	{
-		// 更新怪物AI
-		foreach (var monster in _activeMonsters)
+		// 创建列表副本进行遍历
+		var monsters = _activeMonsters.ToList();
+		foreach (var monster in monsters)
 		{
-			UpdateMonsterAI(monster, delta);
+			if (monster != null && IsInstanceValid(monster))
+			{
+				UpdateMonsterAI(monster, delta);
+			}
 		}
 	}
 

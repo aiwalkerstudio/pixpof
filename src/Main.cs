@@ -1,6 +1,8 @@
 using Godot;
 using System;
 using Game;  // 添加这行来引用 Game 命名空间
+using Game.Enemies; 
+using Game.UI.Battle;  // 添加命名空间引用
 
 public partial class Main : Node
 {
@@ -15,13 +17,13 @@ public partial class Main : Node
 		var translationManager = new TranslationManager();
 		AddChild(translationManager);
 		
-		// 创建UI（最顶层）
-		CreateUI();
-		
-		// 创建玩家（中间层）
+		// 创建玩家（先创建）
 		CreatePlayer();
 		
-		// 加载战斗地图（最底层）并初始化
+		// 创建UI（后创建，并传入玩家引用）
+		CreateUI();
+		
+		// 加载战斗地图
 		LoadBattleMap();
 
 		// 获取玩家和怪物实例
@@ -41,48 +43,26 @@ public partial class Main : Node
 
 	private void CreateUI()
 	{
-		// 确保UI层存在
-		var uiNode = GetNode<CanvasLayer>("UI");
-		if (uiNode == null)
-		{
-			GD.PrintErr("UI CanvasLayer not found! Creating one...");
-			uiNode = new CanvasLayer();
-			uiNode.Name = "UI";
-			AddChild(uiNode);
-		}
+		// 创建战斗UI
+		var battleUIScene = GD.Load<PackedScene>("res://scenes/ui/battle/BattleUI.tscn");
+		_battleUI = battleUIScene.Instantiate<BattleUI>();
+		GetNode<CanvasLayer>("UI").AddChild(_battleUI);
 		
-		try
+		// 初始化战斗UI
+		_battleUI.Initialize(_player);  // 传入玩家引用
+		
+		// 加载角色UI
+		var characterUIScene = GD.Load<PackedScene>("res://scenes/ui/character/CharacterUI.tscn");
+		if (characterUIScene != null)
 		{
-			// 加载战斗UI
-			var battleUIScene = GD.Load<PackedScene>("res://scenes/ui/battle/BattleUI.tscn");
-			if (battleUIScene != null)
-			{
-				_battleUI = battleUIScene.Instantiate<BattleUI>();
-				uiNode.AddChild(_battleUI);
-				GD.Print("BattleUI created successfully");
-			}
-			else
-			{
-				GD.PrintErr("Failed to load BattleUI scene!");
-			}
-			
-			// 加载角色UI
-			var characterUIScene = GD.Load<PackedScene>("res://scenes/ui/character/CharacterUI.tscn");
-			if (characterUIScene != null)
-			{
-				_characterUI = characterUIScene.Instantiate<CharacterUI>();
-				uiNode.AddChild(_characterUI);
-				_characterUI.Hide();
-				GD.Print("CharacterUI created successfully");
-			}
-			else
-			{
-				GD.PrintErr("Failed to load CharacterUI scene!");
-			}
+			_characterUI = characterUIScene.Instantiate<CharacterUI>();
+			GetNode<CanvasLayer>("UI").AddChild(_characterUI);
+			_characterUI.Hide();
+			GD.Print("CharacterUI created successfully");
 		}
-		catch (Exception e)
+		else
 		{
-			GD.PrintErr($"Error creating UI: {e.Message}\n{e.StackTrace}");
+			GD.PrintErr("Failed to load CharacterUI scene!");
 		}
 	}
 

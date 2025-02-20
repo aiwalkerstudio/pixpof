@@ -18,19 +18,19 @@ namespace Game.Skills.Support
         public override void OnDamageTaken(float damage)
         {
             _damageAccumulated += damage;
-            GD.Print($"{Name}: 累积伤害 {_damageAccumulated}/{DAMAGE_THRESHOLD}  {_damageAccumulated >= DAMAGE_THRESHOLD} {CanTrigger()}");
+            //GD.Print($"{Name}: 累积伤害 {_damageAccumulated}/{DAMAGE_THRESHOLD}  {_damageAccumulated >= DAMAGE_THRESHOLD} {CanTrigger()}");
             
 
             if (_damageAccumulated >= DAMAGE_THRESHOLD && CanTrigger())
             {
-              GD.Print($" LinkedSkills: {LinkedSkills}");
+                //GD.Print($" LinkedSkills: {LinkedSkills}");
                 // 触发所有链接的技能
                 foreach (var skill in LinkedSkills)
                 {
-                    GD.Print($"{Name} 准备触发技能: {skill.Name}  {skill.CanTrigger()}");
+                    //GD.Print($"{Name} 准备触发技能: {skill.Name}  {skill.CanTrigger()}");
                     if (skill.CanTrigger())
                     {
-                        GD.Print($"{Name} 触发技能: {skill.Name}");
+                        //GD.Print($"{Name} 触发技能: {skill.Name}");
                         skill.Trigger(Source);
                     }
                 }

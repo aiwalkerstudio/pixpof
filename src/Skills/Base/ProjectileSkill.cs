@@ -11,13 +11,18 @@ namespace Game.Skills.Base
 			return (mousePos - source.GlobalPosition).Normalized();
 		}
 
-		protected abstract void CreateProjectile(Node2D source);
+		protected virtual void OnTrigger(Node source)
+		{
+			// 基类的默认实现
+		}
 
 		public override void Trigger(Node source)
 		{
-			if (CanTrigger() && source is Node2D source2D)
+			base.Trigger(source);
+			if (source is Node2D node2D)
 			{
-				CreateProjectile(source2D);
+				OnTrigger(source);  // 调用子类实现的OnTrigger
+				CreateProjectile(node2D);
 				StartCooldown();
 			}
 		}
@@ -32,5 +37,7 @@ namespace Game.Skills.Base
 		{
 			// 子类可以重写此方法以支持多重投射
 		}
+
+		protected abstract void CreateProjectile(Node2D source);
 	}
 } 

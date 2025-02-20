@@ -12,6 +12,8 @@ namespace Game.Skills.Active
 		private const float DAMAGE = 25f;
 		private const int MULTISHOT_COUNT = 3;
 		private const float MULTISHOT_ANGLE = 15f;
+		private float _damage = 30.0f;  // 基础伤害
+		private float _radius = 100.0f;  // 爆炸范围
 		
 		public override string Name { get; protected set; } = "火球术";
 
@@ -21,7 +23,7 @@ namespace Game.Skills.Active
 			public float Speed { get; set; } = 300.0f;
 			
 			[Export]
-			public float Damage { get; set; } = 25.0f;
+			public float Damage { get; set; } = 25.0f;  // 确保这个值不是0
 			
 			public Vector2 Direction { get; set; } = Vector2.Right;
 			public Node Source { get; set; }
@@ -30,8 +32,8 @@ namespace Game.Skills.Active
 			
 			public override void _Ready()
 			{
-				CollisionLayer = 4;
-				CollisionMask = 2;
+				CollisionLayer = 8;  // 第4层，用于投射物
+				CollisionMask = 4;   // 第3层，用于检测敌人
 				
 				var shape = new CircleShape2D();
 				shape.Radius = 8f;
@@ -39,6 +41,7 @@ namespace Game.Skills.Active
 				collision.Shape = shape;
 				AddChild(collision);
 				
+				// 添加视觉效果
 				var sprite = new ColorRect();
 				sprite.Color = new Color(1f, 0.2f, 0f);
 				sprite.Size = new Vector2(16, 16);
@@ -53,6 +56,23 @@ namespace Game.Skills.Active
 				AddChild(glow);
 				
 				BodyEntered += OnBodyEntered;
+				AreaEntered += OnAreaEntered;
+			}
+			
+			private void OnBodyEntered(Node2D body)
+			{
+				if (body is Monster monster)
+				{
+					GD.Print($"FireballProjectile hit monster at {monster.GlobalPosition}");
+					monster.TakeDamage(Damage);
+					CreateExplosionEffect();
+					QueueFree();
+				}
+			}
+			
+			private void OnAreaEntered(Area2D area)
+			{
+				GD.Print($"FireballProjectile entered area: {area.Name} of type {area.GetType().Name}");
 			}
 			
 			public override void _Process(double delta)
@@ -65,16 +85,6 @@ namespace Game.Skills.Active
 				}
 				
 				Position += Direction * Speed * (float)delta;
-			}
-			
-			private void OnBodyEntered(Node2D body)
-			{
-				if (body is Monster monster)
-				{
-					monster.TakeDamage(Damage);
-					CreateExplosionEffect();
-					QueueFree();
-				}
 			}
 			
 			private void CreateExplosionEffect()
@@ -144,9 +154,10 @@ namespace Game.Skills.Active
 			var projectile = new FireballProjectile
 			{
 				Speed = PROJECTILE_SPEED,
-				Damage = DAMAGE,
+				Damage = DAMAGE,  // 确保这里的DAMAGE值正确
 				Source = source
 			};
+			GD.Print($"Created FireballProjectile with damage: {projectile.Damage}"); // 添加这行调试信息
 			return projectile;
 		}
 
@@ -160,6 +171,71 @@ namespace Game.Skills.Active
 		{
 			_isMultishot = false;
 			GD.Print("火球术: 关闭多重投射模式");
+		}
+
+		protected override void OnTrigger(Node source)
+		{
+			base.OnTrigger(source);  // 调用基类方法
+			
+			if (source is Game.Player player)
+			{
+				// 获取鼠标位置作为目标点
+				var mousePos = player.GetGlobalMousePosition();
+				GD.Print($"Casting Fireball at {mousePos}");
+
+				// 检测范围内的敌人
+				var spaceState = player.GetWorld2D().DirectSpaceState;
+				var query = new PhysicsShapeQueryParameters2D();
+				var shape = new CircleShape2D();
+				shape.Radius = _radius;
+				query.Shape = shape;
+				query.Transform = new Transform2D(0, mousePos);
+				query.CollisionMask = 4;  // 敌人的碰撞层
+
+				var results = spaceState.IntersectShape(query);
+				foreach (var result in results)
+				{
+					var collider = result["collider"].As<Node2D>();
+					if (collider is Enemy enemy)
+					{
+						GD.Print($"Fireball hits enemy at {enemy.GlobalPosition}");
+						enemy.TakeDamage(_damage);
+					}
+				}
+
+				// 播放特效
+				PlayFireballEffect(player.GlobalPosition, mousePos);
+			}
+		}
+
+		private void PlayFireballEffect(Vector2 start, Vector2 end)
+		{
+			// TODO: 添加火球飞行和爆炸特效
+			var tween = Source.CreateTween();
+			var effect = new ColorRect();
+			effect.Color = new Color(1, 0.5f, 0);  // 橙色
+			effect.Size = new Vector2(20, 20);
+			effect.Position = start - effect.Size / 2;
+			Source.GetTree().CurrentScene.AddChild(effect);
+
+			tween.TweenProperty(effect, "position", end - effect.Size / 2, 0.3f);
+			tween.TweenCallback(Callable.From(() => {
+				effect.QueueFree();
+				PlayExplosionEffect(end);
+			}));
+		}
+
+		private void PlayExplosionEffect(Vector2 position)
+		{
+			var explosion = new ColorRect();
+			explosion.Color = new Color(1, 0.3f, 0, 0.5f);
+			explosion.Size = new Vector2(_radius * 2, _radius * 2);
+			explosion.Position = position - explosion.Size / 2;
+			Source.GetTree().CurrentScene.AddChild(explosion);
+
+			var tween = Source.CreateTween();
+			tween.TweenProperty(explosion, "modulate:a", 0.0f, 0.3f);
+			tween.TweenCallback(Callable.From(() => explosion.QueueFree()));
 		}
 	}
 } 
