@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://boarkingboss"]
+
+[ext_resource type="Script" path="res://src/Enemies/Boss/BoarKingBoss.cs" id="1_boarking"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_collision"]
+size = Vector2(64, 64)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_sprite"]
+size = Vector2(64, 64)
+
+[node name="BoarKingBoss" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_boarking")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_collision")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_sprite") 

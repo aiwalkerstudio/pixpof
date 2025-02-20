@@ -13,7 +13,7 @@ public partial class BattleMap : Node2D
 	private List<Monster> _activeMonsters = new();
 	private Game.Player _player;  // 使用完整的命名空间路径
 	private BattleUI _battleUI;
-	private MandraBoss _boss; // 现在可以识别 MandraBoss 类型
+	private List<Enemy> _bosses = new();  // 改为Boss列表
 
 	[Signal]
 	public delegate void BattleCompletedEventHandler();
@@ -46,35 +46,35 @@ public partial class BattleMap : Node2D
 			// 生成怪物
 			SpawnMonsters();
 
-			// 加载Boss场景
-			var bossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
-			if (bossScene != null)
+			// 加载曼陀罗Boss场景
+			var mandraBossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
+			if (mandraBossScene != null)
 			{
-				_boss = bossScene.Instantiate<MandraBoss>();
-				
-				// 设置Boss位置 (使用BossSpawn点的位置)
-				var bossSpawn = GetNode<Marker2D>("SpawnPoints/BossSpawn");
-				if (bossSpawn != null)
-				{
-					_boss.GlobalPosition = bossSpawn.GlobalPosition;
-				}
-				else
-				{
-					// 如果找不到生成点，使用默认位置
-					_boss.GlobalPosition = new Vector2(800, 300);
-				}
-				
-				_monsters.AddChild(_boss);
-				GD.Print("Boss spawned successfully");
+				var mandraBoss = mandraBossScene.Instantiate<MandraBoss>();
+				SpawnBoss(mandraBoss, "曼陀罗Boss", new Vector2(700, 200));
+				_bosses.Add(mandraBoss);
 			}
 			else
 			{
-				GD.PrintErr("Failed to load Boss scene!");
+				GD.PrintErr("Failed to load MandraBoss scene!");
+			}
+
+			// 加载野猪王Boss场景
+			var boarBossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/BoarKingBoss.tscn");
+			if (boarBossScene != null)
+			{
+				var boarBoss = boarBossScene.Instantiate<BoarKingBoss>();
+				SpawnBoss(boarBoss, "野猪王Boss", new Vector2(900, 400));
+				_bosses.Add(boarBoss);
+			}
+			else
+			{
+				GD.PrintErr("Failed to load BoarKingBoss scene!");
 			}
 		}
 		catch (Exception e)
 		{
-			GD.PrintErr($"Error spawning boss: {e.Message}\n{e.StackTrace}");
+			GD.PrintErr($"Error spawning bosses: {e.Message}\n{e.StackTrace}");
 		}
 	}
 
@@ -233,9 +233,33 @@ public partial class BattleMap : Node2D
 		}
 	}
 
-	public void OnBossDefeated()
+	private void SpawnBoss(Enemy boss, string bossName, Vector2 position)
 	{
-		// 处理Boss被击败的逻辑
-		EmitSignal(SignalName.BattleCompleted);
+		// 设置Boss位置
+		boss.GlobalPosition = position;
+		
+		_monsters.AddChild(boss);
+		GD.Print($"{bossName} spawned at {position}");
+
+		// 连接Boss信号
+		if (boss is MandraBoss mandraBoss)
+		{
+			mandraBoss.BossDefeated += OnBossDefeated;
+		}
+		else if (boss is BoarKingBoss boarBoss)
+		{
+			boarBoss.BossDefeated += OnBossDefeated;
+		}
+	}
+
+	private void OnBossDefeated()
+	{
+		// 检查是否所有Boss都被击败
+		_bosses.RemoveAll(boss => !IsInstanceValid(boss));
+		
+		if (_bosses.Count == 0 && _activeMonsters.Count == 0)
+		{
+			EmitSignal(SignalName.BattleCompleted);
+		}
 	}
 } 
