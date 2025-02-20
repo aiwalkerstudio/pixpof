@@ -47,30 +47,30 @@ public partial class BattleMap : Node2D
 			SpawnMonsters();
 
 			// 加载Boss场景
-			// var bossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
-			// if (bossScene != null)
-			// {
-			// 	_boss = bossScene.Instantiate<MandraBoss>();
+			var bossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
+			if (bossScene != null)
+			{
+				_boss = bossScene.Instantiate<MandraBoss>();
 				
-			// 	// 设置Boss位置 (使用BossSpawn点的位置)
-			// 	var bossSpawn = GetNode<Marker2D>("SpawnPoints/BossSpawn");
-			// 	if (bossSpawn != null)
-			// 	{
-			// 		_boss.GlobalPosition = bossSpawn.GlobalPosition;
-			// 	}
-			// 	else
-			// 	{
-			// 		// 如果找不到生成点，使用默认位置
-			// 		_boss.GlobalPosition = new Vector2(800, 300);
-			// 	}
+				// 设置Boss位置 (使用BossSpawn点的位置)
+				var bossSpawn = GetNode<Marker2D>("SpawnPoints/BossSpawn");
+				if (bossSpawn != null)
+				{
+					_boss.GlobalPosition = bossSpawn.GlobalPosition;
+				}
+				else
+				{
+					// 如果找不到生成点，使用默认位置
+					_boss.GlobalPosition = new Vector2(800, 300);
+				}
 				
-			// 	_monsters.AddChild(_boss);
-			// 	GD.Print("Boss spawned successfully");
-			// }
-			// else
-			// {
-			// 	GD.PrintErr("Failed to load Boss scene!");
-			// }
+				_monsters.AddChild(_boss);
+				GD.Print("Boss spawned successfully");
+			}
+			else
+			{
+				GD.PrintErr("Failed to load Boss scene!");
+			}
 		}
 		catch (Exception e)
 		{

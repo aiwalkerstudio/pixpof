@@ -17,26 +17,13 @@ public partial class CharacterUI : Control
 	{
 		GD.Print("CharacterUI initializing...");
 		
-		// 尝试不同的路径查找 GoldLabel
+		// 获取金币标签
 		_goldLabel = GetNode<Label>("GoldLabel");
 		if (_goldLabel == null)
 		{
-			_goldLabel = GetNode<Label>("HBoxContainer/GoldLabel");
-			if (_goldLabel == null)
-			{
-				_goldLabel = GetNode<Label>("TopBar/GoldLabel");
-				if (_goldLabel == null)
-				{
-					GD.PrintErr("GoldLabel node not found! Tried paths:");
-					GD.PrintErr("- GoldLabel");
-					GD.PrintErr("- HBoxContainer/GoldLabel");
-					GD.PrintErr("- TopBar/GoldLabel");
-					GD.PrintErr("Current node path: " + GetPath());
-					return;
-				}
-			}
+			GD.PrintErr("GoldLabel not found in CharacterUI!");
+			return;
 		}
-		GD.Print("Found GoldLabel at: " + _goldLabel.GetPath());
 		
 		// 获取节点引用
 		_healthValue = GetNode<Label>("HBoxContainer/StatsPanel/VBoxContainer/GridContainer/HealthValue");

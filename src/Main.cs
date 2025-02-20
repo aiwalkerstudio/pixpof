@@ -9,7 +9,6 @@ public partial class Main : Node
 	private Game.Player _player;  // 使用完整的命名空间路径
 	private BattleUI _battleUI;
 	private CharacterUI _characterUI;
-	private Monster _monster;
 
 	public override void _Ready()
 	{
@@ -26,18 +25,11 @@ public partial class Main : Node
 		// 加载战斗地图
 		LoadBattleMap();
 
-		// 获取玩家和怪物实例
+		// 获取玩家实例
 		_player = GetNode<Game.Player>("Player");  // 使用完整的命名空间路径
-		_monster = GetNode<Monster>("Monster");
-
 		if (_player == null)
 		{
 			GD.PrintErr("Player node not found!");
-		}
-
-		if (_monster == null)
-		{
-			GD.PrintErr("Monster node not found!");
 		}
 	}
 
