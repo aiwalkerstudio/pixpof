@@ -15,7 +15,7 @@ Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of 
   - Mod support for custom skills
 
 - **Character Progression**
-  - Streamlined passive skill tree
+  - Streamlined passive skill *tree*
   - Diverse class paths
   - Free attribute allocation
   - Level-based skill unlocks

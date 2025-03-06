@@ -3,7 +3,10 @@ description: godot
 globs: *.cs
 ---
 # Godot Rules
-  
+
+## Godot version Rules
+We are use Godot 4.x 
+
 ## File Creation Rules
  
 ### Check Duplicate Files

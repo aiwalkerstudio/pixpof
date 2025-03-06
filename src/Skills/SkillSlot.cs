@@ -24,18 +24,18 @@ public partial class SkillSlot : Node
 			var lesserMultipleProjectilesSupport = new Game.Skills.Support.LesserMultipleProjectilesSupport();
 			var soulrend = new Game.Skills.Active.Soulrend();
 			var fireball = new Game.Skills.Active.Fireball();
+			var iceBolt = new Game.Skills.Active.IceBolt();  // 新增寒冰弹技能
 
 			// 设置技能链接
-			// soulrend.AddSupport(castWhenDamageTakenSupport);
-			// soulrend.AddSupport(lesserMultipleProjectilesSupport);
-
+			iceBolt.AddSupport(lesserMultipleProjectilesSupport);  // 寒冰弹支持多重投射
+			
 			fireball.AddSupport(castWhenDamageTakenSupport);
 			fireball.AddSupport(lesserMultipleProjectilesSupport);
 			
 			// 配置技能槽
-			slots[0] = castWhenDamageTakenSupport;
-			slots[1] = soulrend;
-			slots[2] = lesserMultipleProjectilesSupport;
+			slots[0] = iceBolt;  // 将寒冰弹设置为技能1
+			slots[1] = fireball;  // 火球术为技能2
+			slots[2] = soulrend;  // 裂魂术为技能3
 			
 			// 初始化所有技能
 			foreach (var skill in slots)
