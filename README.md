@@ -1,6 +1,6 @@
 # Pixel Path of Fighter
 
-A simplified 2D pixel-style action RPG inspired by Path of Fighter, featuring streamlined gameplay mechanics, reduced difficulty, and enhanced entertainment value.
+A simplified 2D pixel-style action RPG inspired by Path of Exile, featuring streamlined gameplay mechanics, reduced difficulty, and enhanced entertainment value.
 
 ## About The Project
 
