@@ -122,7 +122,7 @@ When implementing new features, please follow these guidelines:
 
 ## License
 
-This project is licensed under the GPLv3/ License - see the LICENSE file for details.
+This project is licensed under the GPLv3/ELv2 License - see the LICENSE file for details.
 
 ## Sponsorship
 

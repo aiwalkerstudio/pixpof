@@ -183,52 +183,18 @@ namespace Game.Enemies
 			GD.Print($"Monster final health: {CurrentHealth}/{MaxHealth}");
 			
 			// 掉落金币
-			try 
+			var goldDrop = new GoldDrop();
+			goldDrop.Amount = (int)GD.RandRange(1, 10);
+			goldDrop.GlobalPosition = GlobalPosition;
+			GetTree().CurrentScene.AddChild(goldDrop);
+			
+			// 小概率掉落 Mirror of Kalandra (1%)
+			if (GD.Randf() < 0.50f)
 			{
-				// 创建金币掉落物
-				var goldDrop = new Game.Items.GoldDrop();  // 使用完整的命名空间
-				int amount = (int)GD.RandRange(5, 15);
-				goldDrop.Amount = amount;
-				goldDrop.GlobalPosition = GlobalPosition;
-				
-				// 确保添加到正确的场景中
-				var currentScene = GetTree().CurrentScene;
-				GD.Print($"Current scene: {currentScene?.Name ?? "null"}");
-				GD.Print($"Current scene path: {currentScene?.GetPath() ?? "null"}");
-				
-				if (currentScene != null)
-				{
-					// 尝试获取Monsters节点
-					var monstersNode = GetParent();
-					GD.Print($"Monsters node: {monstersNode?.Name ?? "null"}");
-					GD.Print($"Monsters node path: {monstersNode?.GetPath() ?? "null"}");
-					
-					if (monstersNode != null)
-					{
-						GD.Print($"Adding GoldDrop to parent node: {monstersNode.Name}");
-						monstersNode.AddChild(goldDrop);
-						GD.Print($"GoldDrop added to {monstersNode.Name}");
-					}
-					else
-					{
-						GD.Print($"Adding GoldDrop to current scene: {currentScene.Name}");
-						currentScene.AddChild(goldDrop);
-						GD.Print($"GoldDrop added to {currentScene.Name}");
-					}
-					
-					GD.Print($"Monster {Name} dropped {amount} gold at position {GlobalPosition}");
-					GD.Print($"GoldDrop node path: {goldDrop.GetPath()}");
-					GD.Print($"GoldDrop scene tree status: {goldDrop.IsInsideTree()}");
-				}
-				else
-				{
-					GD.PrintErr("Failed to drop gold: Current scene is null!");
-				}
-			}
-			catch (Exception e)
-			{
-				GD.PrintErr($"Error dropping gold: {e.Message}");
-				GD.PrintErr($"Stack trace: {e.StackTrace}");
+				var mirror = new Game.Items.MirrorOfKalandra();
+				mirror.GlobalPosition = GlobalPosition + new Vector2(0, 20);  // 稍微偏移一点位置
+				GetTree().CurrentScene.AddChild(mirror);
+				GD.Print("Monster dropped Mirror of Kalandra!");
 			}
 			
 			GD.Print("=== Calling base.Die() ===");
