@@ -1,10 +1,10 @@
-# Pixel Path of Exile
+# Pixel Path of Fighter
 
-A simplified 2D pixel-style action RPG inspired by Path of Exile, featuring streamlined gameplay mechanics, reduced difficulty, and enhanced entertainment value.
+A simplified 2D pixel-style action RPG inspired by Path of Fighter, featuring streamlined gameplay mechanics, reduced difficulty, and enhanced entertainment value.
 
 ## About The Project
 
-Pixel Path of Exile is a retro-style ARPG that combines the core mechanics of Path of Exile with pixel art aesthetics. The game aims to provide an accessible yet engaging experience for players who enjoy action RPGs but prefer a more straightforward approach.
+Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of Path of Exile with pixel art aesthetics. The game aims to provide an accessible yet engaging experience for players who enjoy action RPGs but prefer a more straightforward approach.
 
 ### Key Features
 
@@ -122,10 +122,20 @@ When implementing new features, please follow these guidelines:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GPLv3/ License - see the LICENSE file for details.
+
+## Sponsorship
+
+If you find this project helpful and would like to support its development, you can sponsor us through the following channels:
+
+### Sponsorship Channels
+- [Afdian](https://afdian.com/a/smithli) - Preferred platform for Chinese users
+- [Ko-fi](https://ko-fi.com/smithli) - One-time or monthly support
+
+All sponsors will be listed in our Sponsors section. Thank you for your support!
 
 ## Acknowledgments
 
-- Inspired by Path of Exile
+- Inspired by Path of Fighter
 - Built with love for the ARPG community
 - Thanks to all contributors
