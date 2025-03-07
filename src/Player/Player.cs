@@ -7,6 +7,11 @@ namespace Game
 {
 	public partial class Player : CharacterBody2D
 	{
+		// 添加表情显示相关字段
+		private Label _playerEmoji;
+		private string _emojiText = "😄";
+		private float _animationTime = 0f;
+
 		[Export]
 		public float Speed = 300.0f;
 
@@ -86,10 +91,31 @@ namespace Game
 			{
 				GD.Print("SkillSlot initialized successfully.");
 			}
+			
+			// 创建表情符号显示
+			SetupEmojiDisplay();
+		}
+		
+		private void SetupEmojiDisplay()
+		{
+			_playerEmoji = new Label();
+			_playerEmoji.Text = _emojiText;
+			_playerEmoji.HorizontalAlignment = HorizontalAlignment.Center;
+			_playerEmoji.VerticalAlignment = VerticalAlignment.Center;
+			
+			// 设置字体大小和颜色
+			_playerEmoji.AddThemeFontSizeOverride("font_size", 32);
+			_playerEmoji.AddThemeColorOverride("font_color", Colors.Yellow);
+			
+			// 设置位置
+			_playerEmoji.Position = new Vector2(-16, -16);
+			
+			AddChild(_playerEmoji);
 		}
 
 		public override void _PhysicsProcess(double delta)
 		{
+			// 现有移动代码
 			Vector2 velocity = Velocity;
 			Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 			
@@ -104,6 +130,40 @@ namespace Game
 
 			Velocity = velocity;
 			MoveAndSlide();
+			
+			// 更新表情动画
+			UpdateEmojiAnimation((float)delta);
+		}
+		
+		private void UpdateEmojiAnimation(float delta)
+		{
+			_animationTime += delta;
+			
+			// 根据玩家状态调整表情
+			if (Velocity.Length() > 0.1f)
+			{
+				// 移动时轻微上下跳动
+				// float bounce = Mathf.Sin(_animationTime * 10) * 2;
+				// _playerEmoji.Position = new Vector2(0, bounce);
+			}
+			else
+			{
+				// 静止时轻微呼吸效果
+				float scale = 1.0f + 0.05f * Mathf.Sin(_animationTime * 2);
+				_playerEmoji.Scale = new Vector2(_playerEmoji.Scale.X * Mathf.Sign(_playerEmoji.Scale.X), scale);
+			}
+			
+			// 受伤时变红
+			if (_currentHealth < MaxHealth * 0.3f)
+			{
+				_playerEmoji.Text = "😰"; // 低血量时改变表情
+				_playerEmoji.Modulate = new Color(1, 0.5f + 0.5f * Mathf.Sin(_animationTime * 5), 0.5f);
+			}
+			else
+			{
+				_playerEmoji.Text = _emojiText;
+				_playerEmoji.Modulate = Colors.White;
+			}
 		}
 
 		public override void _Process(double delta)
@@ -319,4 +379,4 @@ namespace Game
 			GD.Print($"Player collected {amount} gold, total: {Gold}");
 		}
 	}
-} 
+}

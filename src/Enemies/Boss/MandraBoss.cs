@@ -33,6 +33,10 @@ namespace Game.Enemies.Boss
 		
 		[Export]
 		public int PetalProjectileCount { get; set; } = 8;
+		
+		// 添加Unicode表情显示
+		private Label _emojiLabel;
+		private string _bossEmoji = "🏵️";
 
 		private BossState _currentState = BossState.Idle;
 		private float _spinTimer = 0f;
@@ -46,11 +50,51 @@ namespace Game.Enemies.Boss
 			MaxHealth = 10000000000000.0f;
 			AttackDamage = 25.0f;
 			CurrentHealth = MaxHealth;
+			
+			// 创建显示Unicode表情的Label
+			SetupEmojiDisplay();
+		}
+		
+		private void SetupEmojiDisplay()
+		{
+			_emojiLabel = new Label();
+			_emojiLabel.Text = _bossEmoji;
+			_emojiLabel.HorizontalAlignment = HorizontalAlignment.Center;
+			_emojiLabel.VerticalAlignment = VerticalAlignment.Center;
+			
+			// 设置字体大小
+			_emojiLabel.AddThemeColorOverride("font_color", Colors.Pink);
+			_emojiLabel.AddThemeFontSizeOverride("font_size", 64);
+			
+			// 调整位置，使其与碰撞形状居中对齐
+			_emojiLabel.Position = new Vector2(-32, -32);
+			
+			AddChild(_emojiLabel);
 		}
 
 		public override void _PhysicsProcess(double delta)
 		{
 			UpdateAI((float)delta);
+			
+			// 根据状态更新表情动画
+			UpdateEmojiAnimation((float)delta);
+		}
+		
+		private void UpdateEmojiAnimation(float delta)
+		{
+			// 根据Boss状态调整表情显示效果
+			switch (_currentState)
+			{
+				case BossState.Spinning:
+					break;
+				case BossState.Attacking:
+					_emojiLabel.Scale = new Vector2(1.2f, 1.2f);
+					break;
+				default:
+					_emojiLabel.Rotation = 0;
+					_emojiLabel.Scale = Vector2.One;
+					break;
+			}
 		}
 
 		private void UpdateAI(float delta)
@@ -222,4 +266,4 @@ namespace Game.Enemies.Boss
 			base.Die();
 		}
 	}
-} 
+}

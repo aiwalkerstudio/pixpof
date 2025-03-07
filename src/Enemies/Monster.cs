@@ -8,6 +8,11 @@ namespace Game.Enemies
 {
 	public partial class Monster : Enemy
 	{
+		// 添加表情显示相关字段
+		private Label _monsterEmoji;
+		private string _emojiText = "🧟‍♂️";
+		private float _animationTime = 0f;
+
 		[Export]
 		public float MoveSpeed { get; set; } = 100.0f;
 		
@@ -93,7 +98,27 @@ namespace Game.Enemies
 			// 添加攻击区域
 			CreateAttackArea();
 			
+			// 创建表情符号显示
+			SetupEmojiDisplay();
+			
 			GD.Print($"=== Monster {Name} Initialization Complete ===");
+		}
+		
+		private void SetupEmojiDisplay()
+		{
+			_monsterEmoji = new Label();
+			_monsterEmoji.Text = _emojiText;
+			_monsterEmoji.HorizontalAlignment = HorizontalAlignment.Center;
+			_monsterEmoji.VerticalAlignment = VerticalAlignment.Center;
+			
+			// 设置字体大小和颜色
+			_monsterEmoji.AddThemeFontSizeOverride("font_size", 24);
+			_monsterEmoji.AddThemeColorOverride("font_color", new Color(0.2f, 0.8f, 0.2f)); // 绿色僵尸
+			
+			// 设置位置
+			_monsterEmoji.Position = new Vector2(-16, -16);
+			
+			AddChild(_monsterEmoji);
 		}
 
 		private void CreateAttackArea()
@@ -115,6 +140,48 @@ namespace Game.Enemies
 		{
 			base._Process(delta);
 			UpdateDotEffects((float)delta);
+			UpdateEmojiAnimation((float)delta);
+		}
+		
+		private void UpdateEmojiAnimation(float delta)
+		{
+			_animationTime += delta;
+			
+			// 根据怪物状态调整表情
+			switch (_currentState)
+			{
+				case State.Idle:
+					// 待机状态轻微摇晃
+					_monsterEmoji.Rotation = Mathf.Sin(_animationTime * 1.5f) * 0.1f;
+					break;
+					
+				case State.Chase:
+					// 追击状态快速摇晃
+					_monsterEmoji.Rotation = Mathf.Sin(_animationTime * 8) * 0.15f;
+					break;
+					
+				case State.Attack:
+					// 攻击状态放大
+					_monsterEmoji.Scale = new Vector2(
+						Mathf.Sign(_monsterEmoji.Scale.X) * (1.0f + 0.3f * Mathf.Sin(_animationTime * 10)),
+						1.0f + 0.3f * Mathf.Sin(_animationTime * 10)
+					);
+					break;
+					
+				case State.Dead:
+					// 死亡状态
+					_monsterEmoji.Rotation = Mathf.Pi/2; // 横躺
+					_monsterEmoji.Modulate = new Color(0.5f, 0.5f, 0.5f, 0.5f); // 变灰
+					break;
+			}
+			
+			// 受伤效果
+			if (CurrentHealth < MaxHealth * 0.5f)
+			{
+				// 低血量时闪烁
+				float alpha = 0.5f + 0.5f * Mathf.Sin(_animationTime * 5);
+				_monsterEmoji.Modulate = new Color(1, alpha, alpha, 1);
+			}
 		}
 
 		private void UpdateDotEffects(float delta)
@@ -172,12 +239,23 @@ namespace Game.Enemies
 			
 			base.TakeDamage(damage);  // 让基类处理伤害计算
 			
+			// 受伤时表情闪烁
+			if (_monsterEmoji != null)
+			{
+				var tween = CreateTween();
+				tween.TweenProperty(_monsterEmoji, "modulate", new Color(1, 0, 0), 0.1f);
+				tween.TweenProperty(_monsterEmoji, "modulate", new Color(1, 1, 1), 0.1f);
+			}
+			
 			GD.Print($"Monster {Name} health after damage: {CurrentHealth}/{MaxHealth}");
 			GD.Print($"=== Monster {Name} TakeDamage End ===");
 		}
 
 		public override void Die()
 		{
+			// 设置死亡状态
+			_currentState = State.Dead;
+			
 			GD.Print($"=== Monster Death Process Start ===");
 			GD.Print($"Monster {Name} at {GlobalPosition} is dying...");
 			GD.Print($"Monster final health: {CurrentHealth}/{MaxHealth}");
@@ -325,4 +403,4 @@ namespace Game.Enemies
 
 		// ... 添加其他新功能 ...
 	}
-} 
+}

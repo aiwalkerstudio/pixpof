@@ -10,6 +10,11 @@ namespace Game.Enemies.Boss
         [Signal]
         public delegate void BossDefeatedEventHandler();
 
+        // 添加Unicode表情显示
+        private Label _emojiLabel;
+        private string _bossEmoji = "🐗";
+        private float _animationTime = 0f;
+
         private enum BossState
         {
             Idle,
@@ -51,11 +56,64 @@ namespace Game.Enemies.Boss
             // 设置碰撞
             CollisionLayer = 4;  // 敌人层
             CollisionMask = 3;   // 与玩家(1)和墙(2)碰撞
+            
+            // 创建显示Unicode表情的Label
+            SetupEmojiDisplay();
+        }
+        
+        private void SetupEmojiDisplay()
+        {
+            _emojiLabel = new Label();
+            _emojiLabel.Text = _bossEmoji;
+            _emojiLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            _emojiLabel.VerticalAlignment = VerticalAlignment.Center;
+            
+            // 设置字体大小和颜色
+            _emojiLabel.AddThemeColorOverride("font_color", Colors.Brown);
+            _emojiLabel.AddThemeFontSizeOverride("font_size", 64);
+            
+            // 调整位置，使其与碰撞形状居中对齐
+            _emojiLabel.Position = new Vector2(-32, -32);
+            
+            AddChild(_emojiLabel);
         }
 
         public override void _PhysicsProcess(double delta)
         {
             UpdateAI((float)delta);
+            UpdateEmojiAnimation((float)delta);
+        }
+        
+        private void UpdateEmojiAnimation(float delta)
+        {
+            _animationTime += delta;
+            
+            // 根据Boss状态调整表情显示效果
+            switch (_currentState)
+            {
+                case BossState.Charging:
+                    // 蓄力时放大缩小
+                    float scale = 1.0f + 0.2f * Mathf.Sin(_animationTime * 10);
+                    _emojiLabel.Scale = new Vector2(scale, scale);
+                    break;
+                    
+                case BossState.Rushing:
+                    // 冲锋时朝向冲锋方向
+                    break;
+                    
+                case BossState.Stunned:
+                    // 眩晕时旋转
+                    _emojiLabel.Rotation = Mathf.Sin(_animationTime * 5) * 0.5f;
+                    _emojiLabel.Modulate = new Color(1, 0.5f, 0.5f);
+                    break;
+                    
+                default:
+                    // 恢复正常
+                    _emojiLabel.Rotation = 0;
+                    _emojiLabel.Scale = Vector2.One;
+                    _emojiLabel.Modulate = Colors.White;
+                    break;
+            }
         }
 
         private void UpdateAI(float delta)
@@ -227,4 +285,4 @@ namespace Game.Enemies.Boss
             }
         }
     }
-} 
+}

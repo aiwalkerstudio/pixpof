@@ -13,14 +13,21 @@ collision_mask = 6
 script = ExtResource("1_player")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 offset_left = -16.0
 offset_top = -16.0
 offset_right = 16.0
 offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.2, 0.6, 1, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_p1q2r")
 
 [node name="SkillSlot" type="Node" parent="."]
-script = ExtResource("2_skillslot") 
+script = ExtResource("2_skillslot")
