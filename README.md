@@ -139,3 +139,6 @@ All sponsors will be listed in our Sponsors section. Thank you for your support!
 - Inspired by Path of Fighter
 - Built with love for the ARPG community
 - Thanks to all contributors
+
+## Learn AI programming and develop pixpof
+You can visit the tutorial https://aismith.vip/docs/aiprogramming/intro_en
