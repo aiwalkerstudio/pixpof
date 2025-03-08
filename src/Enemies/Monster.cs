@@ -266,8 +266,8 @@ namespace Game.Enemies
 			goldDrop.GlobalPosition = GlobalPosition;
 			GetTree().CurrentScene.AddChild(goldDrop);
 			
-			// 小概率掉落 Mirror of Kalandra (1%)
-			if (GD.Randf() < 0.50f)
+			// 小概率掉落 Mirror of Kalandra (?%)
+			//if (GD.Randf() < 1.00f)
 			{
 				var mirror = new Game.Items.MirrorOfKalandra();
 				mirror.GlobalPosition = GlobalPosition + new Vector2(0, 20);  // 稍微偏移一点位置
