@@ -176,7 +176,7 @@ namespace Game.Skills.Active
 		{
 			base.Initialize();
 			Cooldown = 0.1f;  // 冷却时间
-			Description = "发射追踪灵魂投射物，造成伤害和持续伤害";
+			Description = "Launch a soul projectile that tracks the target, dealing damage and causing continuous damage.";
 		}
 
 		protected override void CreateProjectile(Node2D source)

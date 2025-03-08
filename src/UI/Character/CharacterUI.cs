@@ -136,7 +136,7 @@ public partial class CharacterUI : Control
 	{
 		if (_goldLabel != null)
 		{
-			_goldLabel.Text = $"Gold: {newAmount}";
+			_goldLabel.Text = $"Coins: {newAmount}";
 			GD.Print($"CharacterUI updated gold display: {newAmount}");
 		}
 		else

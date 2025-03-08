@@ -5,7 +5,7 @@ namespace Game.Skills.Support
 {
 	public class LesserMultipleProjectilesSupport : SupportSkill
 	{
-		public override string Name { get; protected set; } = "低阶多重投射";
+		public override string Name { get; protected set; } = "LesserMultipleProjectilesSupport";
 		
 		public override void Initialize()
 		{

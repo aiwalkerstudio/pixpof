@@ -215,32 +215,28 @@ namespace Game
 			if (!InputMap.HasAction("move_right"))
 			{
 				InputMap.AddAction("move_right");
-				InputMap.ActionAddEvent("move_right", new InputEventKey { PhysicalKeycode = Key.D });
 				InputMap.ActionAddEvent("move_right", new InputEventKey { PhysicalKeycode = Key.Right });
 			}
 			
 			if (!InputMap.HasAction("move_left"))
 			{
 				InputMap.AddAction("move_left");
-				InputMap.ActionAddEvent("move_left", new InputEventKey { PhysicalKeycode = Key.A });
 				InputMap.ActionAddEvent("move_left", new InputEventKey { PhysicalKeycode = Key.Left });
 			}
 			
 			if (!InputMap.HasAction("move_down"))
 			{
 				InputMap.AddAction("move_down");
-				InputMap.ActionAddEvent("move_down", new InputEventKey { PhysicalKeycode = Key.S });
 				InputMap.ActionAddEvent("move_down", new InputEventKey { PhysicalKeycode = Key.Down });
 			}
 			
 			if (!InputMap.HasAction("move_up"))
 			{
 				InputMap.AddAction("move_up");
-				InputMap.ActionAddEvent("move_up", new InputEventKey { PhysicalKeycode = Key.W });
 				InputMap.ActionAddEvent("move_up", new InputEventKey { PhysicalKeycode = Key.Up });
 			}
 			
-			GD.Print("已添加默认移动输入映射: WASD和方向键");
+			GD.Print("已添加默认移动输入映射: 方向键");
 		}
 		
 		private void UpdateEmojiAnimation(float delta)

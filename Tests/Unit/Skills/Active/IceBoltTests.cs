@@ -40,8 +40,8 @@ namespace Game.Tests.Unit.Skills.Active
 			_iceBolt.Initialize();
 
 			// Assert
-			Assert.That(_iceBolt.Name, Is.EqualTo("寒冰弹"));
-			Assert.That(_iceBolt.Description, Is.EqualTo("发射一枚寒冰弹，对敌人造成伤害并减速"));
+			Assert.That(_iceBolt.Name, Is.EqualTo("IceBolt"));
+			Assert.That(_iceBolt.Description, Is.EqualTo("Launch an ice bolt, dealing damage to the enemy and slowing them down."));
 			Assert.That(_iceBolt.Cooldown, Is.EqualTo(2.0f));
 			Assert.That(_iceBolt.ManaCost, Is.EqualTo(15.0f));
 			Assert.That(_iceBolt.TriggerType, Is.EqualTo(SkillTriggerType.Active));

@@ -5,7 +5,7 @@ namespace Game.Skills.Support
 {
     public class CastWhenDamageTakenSupport : SupportSkill
     {
-        public override string Name { get; protected set; } = "受伤时施放";
+        public override string Name { get; protected set; } = "CastWhenDamageTakenSupport";
         private float _damageAccumulated = 0;
         private const float DAMAGE_THRESHOLD = 10f;
 

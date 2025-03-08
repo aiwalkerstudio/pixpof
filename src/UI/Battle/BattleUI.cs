@@ -177,7 +177,7 @@ namespace Game.UI.Battle
 			GD.Print($"before  BattleUI updated gold display: {newAmount}");
 			if (_goldLabel != null)
 			{
-				_goldLabel.Text = $"金币: {newAmount}";
+				_goldLabel.Text = $"Coins: {newAmount}";
 				GD.Print($"BattleUI updated gold display: {newAmount}");
 			}
 		}

@@ -27,7 +27,7 @@ namespace Game.Tests.Unit.Skills.Support
 			_mockActiveSkill.Setup(s => s.HasReservation).Returns(false);
 			_mockActiveSkill.Setup(s => s.IsChanneling).Returns(false);
 			_mockActiveSkill.Setup(s => s.CanTrigger()).Returns(true);
-			_mockActiveSkill.Setup(s => s.Name).Returns("测试技能");
+			_mockActiveSkill.Setup(s => s.Name).Returns("test the skill");
 		}
 
 		[Test]
@@ -37,7 +37,7 @@ namespace Game.Tests.Unit.Skills.Support
 			_support.Initialize();
 
 			// Assert
-			Assert.That(_support.Name, Is.EqualTo("受伤时施放"));
+			Assert.That(_support.Name, Is.EqualTo("CastWhenDamageTakenSupport"));
 			Assert.That(_support.Cooldown, Is.EqualTo(0.25f));
 		}
 

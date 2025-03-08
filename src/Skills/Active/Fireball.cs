@@ -111,7 +111,7 @@ namespace Game.Skills.Active
 			base.Initialize();
 			Cooldown = 0.1f;
 			ManaCost = 20f;
-			Description = "发射一颗火球，对敌人造成火焰伤害";
+			Description = "Launch a fireball, dealing fire damage to the enemy.";
 		}
 
 		protected override void CreateProjectile(Node2D source)
