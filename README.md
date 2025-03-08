@@ -48,6 +48,8 @@ Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of 
 
 We welcome contributions from the community! Here's how you can help:
 
+[How to develop](https://aismith.vip/docs/aiprogramming/Chapter%206:%20Participate%20in%20the%20development%20of%20godot%20open%20source%20game)
+
 ### Creating Issues
 
 #### Feature Design Issues
