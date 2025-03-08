@@ -2,6 +2,7 @@ using Godot;
 using Game.Skills;
 using Game.Enemies;
 using Game.UI.Battle;
+using Game.Classes;
 
 namespace Game
 {
@@ -31,11 +32,14 @@ namespace Game
 		public int Gold
 		{
 			get => _gold;
-			private set
+			set
 			{
-				_gold = value;
-				EmitSignal(SignalName.GoldChanged, _gold);  // 在金币数量改变时发送信号
-				GD.Print($"Player Gold changed: {_gold}, emitting GoldChanged signal");
+				if (_gold != value)
+				{
+					_gold = value;
+					EmitSignal(SignalName.GoldChanged, _gold);
+					GD.Print($"Player Gold changed: {_gold}, emitting GoldChanged signal");
+				}
 			}
 		}
 
@@ -53,7 +57,7 @@ namespace Game
 		public float CurrentHealth
 		{
 			get => _currentHealth;
-			private set
+			set
 			{
 				_currentHealth = value;
 				// 可以在这里添加生命值改变的事件
@@ -63,12 +67,43 @@ namespace Game
 		public float CurrentMana
 		{
 			get => _currentMana;
-			private set
+			set
 			{
 				_currentMana = value;
 				// 可以在这里添加魔法值改变的事件
 			}
 		}
+
+		// 基础属性
+		private BaseClass _class;
+		private float _baseMoveSpeed = 200f;
+		private float _moveSpeed;
+		private int _strength;
+		private int _agility;
+		private int _intelligence;
+
+		// 属性访问器
+		public float BaseMoveSpeed => _baseMoveSpeed;
+		public float MoveSpeed 
+		{ 
+			get => _moveSpeed;
+			set => _moveSpeed = value;
+		}
+		public int Strength 
+		{ 
+			get => _strength;
+			set => _strength = value;
+		}
+		public int Agility 
+		{ 
+			get => _agility;
+			set => _agility = value;
+		}
+		public int Intelligence 
+		{ 
+			get => _intelligence;
+			set => _intelligence = value;
+		} 
 
 		public override void _Ready()
 		{
@@ -94,6 +129,13 @@ namespace Game
 			
 			// 创建表情符号显示
 			SetupEmojiDisplay();
+
+			// 设置默认职业为穷鬼
+			_class = new Cracker();
+			_class.Initialize(this);
+			
+			// 初始化移动速度
+			_moveSpeed = _baseMoveSpeed;
 		}
 		
 		private void SetupEmojiDisplay()
@@ -115,24 +157,32 @@ namespace Game
 
 		public override void _PhysicsProcess(double delta)
 		{
-			// 现有移动代码
-			Vector2 velocity = Velocity;
-			Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+			// 更新职业机制
+			_class?.Update(this, delta);
 			
-			if (direction != Vector2.Zero)
-			{
-				velocity = direction * Speed;
-			}
-			else
-			{
-				velocity = Vector2.Zero;
-			}
-
-			Velocity = velocity;
-			MoveAndSlide();
+			// 处理移动
+			HandleMovement();
 			
 			// 更新表情动画
 			UpdateEmojiAnimation((float)delta);
+		}
+		
+		private void HandleMovement()
+		{
+			Vector2 velocity = Vector2.Zero;
+			
+			if (Input.IsActionPressed("move_right"))
+				velocity.X += 1;
+			if (Input.IsActionPressed("move_left"))
+				velocity.X -= 1;
+			if (Input.IsActionPressed("move_down"))
+				velocity.Y += 1;
+			if (Input.IsActionPressed("move_up"))
+				velocity.Y -= 1;
+
+			velocity = velocity.Normalized() * _moveSpeed;
+			Velocity = velocity;
+			MoveAndSlide();
 		}
 		
 		private void UpdateEmojiAnimation(float delta)
@@ -264,8 +314,9 @@ namespace Game
 
 		private void Die()
 		{
-			// TODO: 处理玩家死亡
-			// GD.Print("Player Died!");
+			_class?.OnDeath(this);
+			// 处理死亡逻辑
+			GD.Print($"玩家死亡,当前金币: {_gold}");
 		}
 
 		public void OnAttackPressed()
@@ -375,8 +426,18 @@ namespace Game
 
 		public void CollectGold(int amount)
 		{
-			Gold += amount;  // 使用属性来确保信号被发送
-			GD.Print($"Player collected {amount} gold, total: {Gold}");
+			// 调用AddGold方法保持功能一致
+			AddGold(amount);
+		}
+
+		public void AddGold(int amount)
+		{
+			if(_class is Cracker cracker)
+			{
+				amount = (int)cracker.GetGoldBonus(amount);
+			}
+			Gold += amount;  // 使用属性以触发信号
+			GD.Print($"获得金币: {amount}, 当前总金币: {_gold}");
 		}
 	}
 }

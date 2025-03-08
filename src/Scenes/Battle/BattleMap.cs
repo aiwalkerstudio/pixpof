@@ -121,6 +121,24 @@ public partial class BattleMap : Node2D
 			("Monster1", new Vector2(700, 400)),  // 右下
 			("Monster1", new Vector2(500, 150)),  // 上中
 			("Monster1", new Vector2(500, 450)),  // 下中
+			// ("Monster1", new Vector2(300, 200)),  // 左上
+			// ("Monster1", new Vector2(300, 400)),  // 左下
+			// ("Monster1", new Vector2(700, 200)),  // 右上
+			// ("Monster1", new Vector2(700, 400)),  // 右下
+			// ("Monster1", new Vector2(500, 150)),  // 上中
+			// ("Monster1", new Vector2(500, 450)),  // 下中
+			// ("Monster1", new Vector2(300, 200)),  // 左上
+			// ("Monster1", new Vector2(300, 400)),  // 左下
+			// ("Monster1", new Vector2(700, 200)),  // 右上
+			// ("Monster1", new Vector2(700, 400)),  // 右下
+			// ("Monster1", new Vector2(500, 150)),  // 上中
+			// ("Monster1", new Vector2(500, 450)),  // 下中
+			// ("Monster1", new Vector2(300, 200)),  // 左上
+			// ("Monster1", new Vector2(300, 400)),  // 左下
+			// ("Monster1", new Vector2(700, 200)),  // 右上
+			// ("Monster1", new Vector2(700, 400)),  // 右下
+			// ("Monster1", new Vector2(500, 150)),  // 上中
+			// ("Monster1", new Vector2(500, 450)),  // 下中
 		};
 
 		foreach (var spawn in monsterSpawns)
