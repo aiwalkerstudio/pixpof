@@ -30,7 +30,7 @@ Progress through the main campaign, explore the world, defeat bosses, and uncove
 ### Challenge Modes
 
 #### 1. Survival Gauntlet
-- Survive for 5 minutes while multiple bosses attack you simultaneously
+- Survive for 2 minutes while multiple bosses attack you simultaneously
 - Bosses spawn in waves with increasing difficulty
 - Special rewards based on how many bosses you defeat
 - Global leaderboard for longest survival time

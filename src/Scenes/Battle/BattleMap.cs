@@ -15,6 +15,17 @@ public partial class BattleMap : Node2D
 	private BattleUI _battleUI;
 	private List<Enemy> _bosses = new();  // 改为Boss列表
 
+	// 添加BOSS预制体引用
+	[Export] 
+	private PackedScene EaterOfWorldsScene;
+	
+	[Export]
+	private PackedScene SearingExarchScene;
+
+	// BOSS生成点
+	[Export] 
+	private Node2D BossSpawnPoint;
+
 	[Signal]
 	public delegate void BattleCompletedEventHandler();
 
@@ -71,6 +82,9 @@ public partial class BattleMap : Node2D
 			{
 				GD.PrintErr("Failed to load BoarKingBoss scene!");
 			}
+
+			SpawnBoss("SearingExarch");
+			SpawnBoss("EaterOfWorlds");
 		}
 		catch (Exception e)
 		{
@@ -260,6 +274,40 @@ public partial class BattleMap : Node2D
 		if (_bosses.Count == 0 && _activeMonsters.Count == 0)
 		{
 			EmitSignal(SignalName.BattleCompleted);
+		}
+	}
+
+	// 生成BOSS
+	public void SpawnBoss(string bossName)
+	{
+		try
+		{
+			// 加载Boss场景
+			var bossScene = ResourceLoader.Load<PackedScene>($"res://scenes/enemies/boss/{bossName}.tscn");
+			if(bossScene != null)
+			{
+				var boss = bossScene.Instantiate<Enemy>();
+				_monsters.AddChild(boss);
+				_bosses.Add(boss);
+				
+				// 设置生成位置
+				if(BossSpawnPoint != null)
+				{
+					boss.GlobalPosition = BossSpawnPoint.GlobalPosition;
+				}
+				else
+				{
+					GD.PrintErr($"BossSpawnPoint is null when spawning {bossName}");
+				}
+			}
+			else
+			{
+				GD.PrintErr($"Failed to load {bossName} scene!");
+			}
+		}
+		catch (Exception e)
+		{
+			GD.PrintErr($"Error spawning boss {bossName}: {e.Message}\n{e.StackTrace}");
 		}
 	}
 } 
