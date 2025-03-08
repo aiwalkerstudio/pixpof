@@ -18,7 +18,6 @@ Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of 
   - Streamlined passive skill *tree*
   - Diverse class paths
   - Free attribute allocation
-  - Level-based skill unlocks
 
 - **Equipment System**
   - Pixel art equipment designs
@@ -31,7 +30,6 @@ Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of 
   - Diverse monster types
   - Engaging boss battles
   - Random events
-  - League mechanics
 
 - **Mod Support**
   - Open mod API
@@ -42,6 +40,9 @@ Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of 
     - Monsters
     - Gameplay mechanics
   - Mod manager
+
+## How to play
+[How to play](syteamDoc/howtoplay.md)
 
 ## Contributing
 
@@ -69,7 +70,6 @@ When implementing new features, please follow these guidelines:
    - Detail item statistics
    - Define affix pools
    - Specify item tiers
-   - Include upgrade paths
    - Consider balance implications
 
 3. **Classes**
@@ -104,7 +104,6 @@ When implementing new features, please follow these guidelines:
 - Basic equipment system
 - Fixed maps
 - Essential UI
-- Cross-platform support
 
 ### Phase 2
 - Enhanced skill system
@@ -112,6 +111,7 @@ When implementing new features, please follow these guidelines:
 - Extended equipment system
 - Additional monster types
 - UI improvements
+- Cross-platform support
 
 ### Phase 3
 - Talent tree system
@@ -136,7 +136,7 @@ All sponsors will be listed in our Sponsors section. Thank you for your support!
 
 ## Acknowledgments
 
-- Inspired by Path of Fighter
+- Inspired by Path of Exile
 - Built with love for the ARPG community
 - Thanks to all contributors
 

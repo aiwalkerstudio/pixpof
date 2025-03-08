@@ -83,8 +83,8 @@ public partial class BattleMap : Node2D
 				GD.PrintErr("Failed to load BoarKingBoss scene!");
 			}
 
-			SpawnBoss("SearingExarch");
-			SpawnBoss("EaterOfWorlds");
+			// SpawnBoss("SearingExarch");
+			// SpawnBoss("EaterOfWorlds");
 		}
 		catch (Exception e)
 		{
