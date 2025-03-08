@@ -171,18 +171,76 @@ namespace Game
 		{
 			Vector2 velocity = Vector2.Zero;
 			
-			if (Input.IsActionPressed("move_right"))
+			// 检查输入映射是否存在
+			if (!InputMap.HasAction("move_right"))
+			{
+				GD.Print("添加移动输入映射...");
+				// 添加默认的移动输入映射
+				AddDefaultInputMappings();
+			}
+			
+			// 记录输入状态
+			bool right = Input.IsActionPressed("move_right");
+			bool left = Input.IsActionPressed("move_left");
+			bool down = Input.IsActionPressed("move_down");
+			bool up = Input.IsActionPressed("move_up");
+			
+			if (GD.Randi() % 60 == 0) // 每秒左右打印一次
+			{
+				GD.Print($"移动输入状态: 右={right}, 左={left}, 下={down}, 上={up}");
+			}
+			
+			if (right)
 				velocity.X += 1;
-			if (Input.IsActionPressed("move_left"))
+			if (left)
 				velocity.X -= 1;
-			if (Input.IsActionPressed("move_down"))
+			if (down)
 				velocity.Y += 1;
-			if (Input.IsActionPressed("move_up"))
+			if (up)
 				velocity.Y -= 1;
 
-			velocity = velocity.Normalized() * _moveSpeed;
+			if (velocity != Vector2.Zero)
+			{
+				velocity = velocity.Normalized() * _moveSpeed;
+				GD.Print($"计算移动速度: 方向={velocity.Normalized()}, 速度={_moveSpeed}, 最终速度={velocity}");
+			}
+			
 			Velocity = velocity;
 			MoveAndSlide();
+		}
+
+		private void AddDefaultInputMappings()
+		{
+			// 添加默认的移动输入映射
+			if (!InputMap.HasAction("move_right"))
+			{
+				InputMap.AddAction("move_right");
+				InputMap.ActionAddEvent("move_right", new InputEventKey { PhysicalKeycode = Key.D });
+				InputMap.ActionAddEvent("move_right", new InputEventKey { PhysicalKeycode = Key.Right });
+			}
+			
+			if (!InputMap.HasAction("move_left"))
+			{
+				InputMap.AddAction("move_left");
+				InputMap.ActionAddEvent("move_left", new InputEventKey { PhysicalKeycode = Key.A });
+				InputMap.ActionAddEvent("move_left", new InputEventKey { PhysicalKeycode = Key.Left });
+			}
+			
+			if (!InputMap.HasAction("move_down"))
+			{
+				InputMap.AddAction("move_down");
+				InputMap.ActionAddEvent("move_down", new InputEventKey { PhysicalKeycode = Key.S });
+				InputMap.ActionAddEvent("move_down", new InputEventKey { PhysicalKeycode = Key.Down });
+			}
+			
+			if (!InputMap.HasAction("move_up"))
+			{
+				InputMap.AddAction("move_up");
+				InputMap.ActionAddEvent("move_up", new InputEventKey { PhysicalKeycode = Key.W });
+				InputMap.ActionAddEvent("move_up", new InputEventKey { PhysicalKeycode = Key.Up });
+			}
+			
+			GD.Print("已添加默认移动输入映射: WASD和方向键");
 		}
 		
 		private void UpdateEmojiAnimation(float delta)
@@ -316,7 +374,7 @@ namespace Game
 		{
 			_class?.OnDeath(this);
 			// 处理死亡逻辑
-			GD.Print($"玩家死亡,当前金币: {_gold}");
+			// GD.Print($"玩家死亡,当前金币: {_gold}");
 		}
 
 		public void OnAttackPressed()

@@ -8,7 +8,7 @@ namespace Game.Classes
 		
 		public Cracker()
 		{
-			Name = "Cracker";//穷鬼
+			Name = "Cracker";
 			BaseStrength = 10;
 			BaseAgility = 10;
 			BaseIntelligence = 8;
@@ -32,6 +32,11 @@ namespace Game.Classes
 			player.Strength = BaseStrength;
 			player.Agility = BaseAgility;
 			player.Intelligence = BaseIntelligence;
+
+			// 确保设置正确的移动速度
+			player.MoveSpeed = player.BaseMoveSpeed;
+			
+			GD.Print($"穷鬼职业初始化完成: 生命={BaseHealth}, 魔法={BaseMana}, 金币={BaseGold}, 移动速度={player.MoveSpeed}");
 		}
 
 		public override void Update(Game.Player player, double delta)
@@ -39,10 +44,19 @@ namespace Game.Classes
 			base.Update(player, delta);
 
 			// 计算金币带来的速度加成
-			float speedBonus = player.Gold / 10 * 0.01f; // 每10金币提供1%速度加成
-			player.MoveSpeed = player.BaseMoveSpeed * (1 + speedBonus);
+			float speedBonus = (player.Gold / 1000f) * 0.01f; // 每1000金币提供1%速度加成
+			speedBonus = Mathf.Min(speedBonus, 2.0f); // 最大200%加成
+			
+			float finalSpeed = player.BaseMoveSpeed * (1 + speedBonus);
+			finalSpeed = Mathf.Min(finalSpeed, 1000f); // 限制最大速度
+			
+			player.MoveSpeed = finalSpeed;
 
-			// 金币获取加成在获得金币时处理
+			// 调试输出
+			if (GD.Randi() % 100 == 0) // 降低打印频率
+			{
+				GD.Print($"穷鬼当前状态: 金币={player.Gold}, 速度加成={speedBonus:P}, 实际速度={finalSpeed}");
+			}
 		}
 
 		public override void OnDeath(Game.Player player)
@@ -53,10 +67,10 @@ namespace Game.Classes
 			_deathCount++;
 
 			// 计算损失的金币
-			int goldLoss = _deathCount * 10000;
+			int goldLoss = _deathCount * 1;
 			player.Gold = Mathf.Max(0, player.Gold - goldLoss);
 
-			GD.Print($"穷鬼死亡 {_deathCount} 次,损失 {goldLoss} 金币");
+			//GD.Print($"穷鬼死亡 {_deathCount} 次,损失 {goldLoss} 金币");
 		}
 
 		// 金币获取加成
