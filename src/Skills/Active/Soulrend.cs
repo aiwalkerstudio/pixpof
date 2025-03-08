@@ -21,7 +21,7 @@ namespace Game.Skills.Active
 		private float _dotDuration = 3.0f;  // 持续时间
 		private float _range = 150.0f;  // 攻击范围
 
-		public override string Name { get; protected set; } = "裂魂术";
+		public override string Name { get; protected set; } = "Soulrend";
 
 		private partial class SoulRendProjectile : Area2D
 		{
@@ -175,7 +175,7 @@ namespace Game.Skills.Active
 		public override void Initialize()
 		{
 			base.Initialize();
-			Cooldown = 2.0f;  // 冷却时间
+			Cooldown = 0.1f;  // 冷却时间
 			Description = "发射追踪灵魂投射物，造成伤害和持续伤害";
 		}
 

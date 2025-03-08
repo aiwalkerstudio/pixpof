@@ -15,7 +15,7 @@ namespace Game.Skills.Active
 		private float _damage = 30.0f;  // 基础伤害
 		private float _radius = 100.0f;  // 爆炸范围
 		
-		public override string Name { get; protected set; } = "火球术";
+		public override string Name { get; protected set; } = "Fireball";
 
 		private partial class FireballProjectile : Area2D
 		{
@@ -109,7 +109,7 @@ namespace Game.Skills.Active
 		public override void Initialize()
 		{
 			base.Initialize();
-			Cooldown = 1.0f;
+			Cooldown = 0.1f;
 			ManaCost = 20f;
 			Description = "发射一颗火球，对敌人造成火焰伤害";
 		}

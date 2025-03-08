@@ -15,9 +15,9 @@ namespace Game.Skills.Active
 		private const int MULTISHOT_COUNT = 3;
 		private const float MULTISHOT_ANGLE = 15f;
 		
-		public override string Name { get; protected set; } = "寒冰弹";
+		public override string Name { get; protected set; } = "IceBolt";
 		public override string Description { get; protected set; } = "发射一枚寒冰弹，对敌人造成伤害并减速";
-		public override float Cooldown { get; protected set; } = 2.0f;
+		public override float Cooldown { get; protected set; } = 0.1f;
 		public override float ManaCost { get; protected set; } = 15.0f;
 
 		public override void Initialize()
