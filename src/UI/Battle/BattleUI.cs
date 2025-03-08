@@ -12,6 +12,7 @@ namespace Game.UI.Battle
 		private Button _attackButton;
 		private Button _skill1Button;
 		private Button _skill2Button;
+		private Button _skill3Button;
 		private Control _damageContainer;
 		private Panel _minimap;
 		private SubViewport _minimapViewport;
@@ -34,6 +35,7 @@ namespace Game.UI.Battle
 			_attackButton = GetNode<Button>("SkillBar/HBoxContainer/AttackButton");
 			_skill1Button = GetNode<Button>("SkillBar/HBoxContainer/Skill1Button");
 			_skill2Button = GetNode<Button>("SkillBar/HBoxContainer/Skill2Button");
+			_skill3Button = GetNode<Button>("SkillBar/HBoxContainer/Skill3Button");
 			_damageContainer = GetNode<Control>("DamageContainer");
 			_minimap = GetNode<Panel>("Minimap");
 			_minimapViewport = GetNode<SubViewport>("Minimap/MinimapViewport");
@@ -43,6 +45,7 @@ namespace Game.UI.Battle
 			_attackButton.Pressed += OnAttackButtonPressed;
 			_skill1Button.Pressed += OnSkill1ButtonPressed;
 			_skill2Button.Pressed += OnSkill2ButtonPressed;
+			_skill3Button.Pressed += OnSkill3ButtonPressed;
 
 			// 设置按钮翻译key
 			_attackButton.AddToGroup("Translatable");
@@ -53,6 +56,9 @@ namespace Game.UI.Battle
 			
 			_skill2Button.AddToGroup("Translatable");
 			_skill2Button.Set("TranslationKey", "ui_skill2");
+
+			_skill3Button.AddToGroup("Translatable");
+			_skill3Button.Set("TranslationKey", "ui_skill3");
 
 			// 初始化UI
 			UpdateUI();
@@ -154,6 +160,12 @@ namespace Game.UI.Battle
 		{
 			EmitSignal(SignalName.SkillPressed, 1);
 		}
+
+		private void OnSkill3ButtonPressed()
+		{
+			EmitSignal(SignalName.SkillPressed, 2);
+		}
+
 
 		private void UpdateTranslations()
 		{
