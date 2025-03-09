@@ -190,7 +190,7 @@ namespace Game
 			
 			if (GD.Randi() % 60 == 0) // 每秒左右打印一次
 			{
-				GD.Print($"移动输入状态: 右={right}, 左={left}, 下={down}, 上={up}");
+				//GD.Print($"移动输入状态: 右={right}, 左={left}, 下={down}, 上={up}");
 			}
 			
 			if (right)
@@ -373,6 +373,8 @@ namespace Game
 
 		private void Die()
 		{
+			GD.Print("Player Die() called");
+			
 			_class?.OnDeath(this);
 			
 			// 发送死亡信号给战斗场景
@@ -386,10 +388,25 @@ namespace Game
 			}
 			
 			// 通知父节点玩家死亡
-			GetParent()?.Call("OnPlayerDied");
-			
-			// 清理自身
-			QueueFree();
+			var parent = GetParent();
+			if (parent != null)
+			{
+				GD.Print($"Notifying parent node: {parent.Name} about player death");
+				parent.Call("OnPlayerDied");
+				
+				// 延迟清理自身
+				var timer = GetTree().CreateTimer(0.1f);
+				timer.Timeout += () =>
+				{
+					GD.Print("Player cleaning up...");
+					QueueFree();
+					GD.Print("Player cleaned up");
+				};
+			}
+			else
+			{
+				GD.PrintErr("Player parent node not found!");
+			}
 		}
 
 		public void OnAttackPressed()

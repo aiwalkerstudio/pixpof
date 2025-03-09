@@ -218,4 +218,46 @@ public partial class Main : Node
 		// 返回主菜单
 		_mainMenu.Show();
 	}
+
+	private void ShowMainMenu()
+	{
+		GD.Print("Showing main menu...");
+		
+		// 隐藏玩家和UI
+		if (IsInstanceValid(_player))
+		{
+			_player.Hide();
+		}
+		
+		if (IsInstanceValid(_battleUI))
+		{
+			_battleUI.Hide();
+		}
+		
+		// 返回主菜单
+		_mainMenu.Show();
+		GD.Print("Main menu shown");
+	}
+
+	// 添加处理玩家死亡的方法
+	public void OnPlayerDied()
+	{
+		GD.Print("Main received player death notification");
+		
+		// 查找当前的战斗场景
+		foreach (var child in GetChildren())
+		{
+			if (child is BattleMap battleMap)
+			{
+				GD.Print($"Found battle map: {battleMap.Name}, notifying about player death");
+				battleMap.OnPlayerDied();
+				return;
+			}
+		}
+		
+		GD.PrintErr("No battle map found in Main after player death");
+		
+		// 如果找不到战斗场景，直接返回主菜单
+		ShowMainMenu();
+	}
 } 

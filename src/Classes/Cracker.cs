@@ -55,7 +55,7 @@ namespace Game.Classes
 			// 调试输出
 			if (GD.Randi() % 100 == 0) // 降低打印频率
 			{
-				GD.Print($"穷鬼当前状态: 金币={player.Gold}, 速度加成={speedBonus:P}, 实际速度={finalSpeed}");
+				//GD.Print($"穷鬼当前状态: 金币={player.Gold}, 速度加成={speedBonus:P}, 实际速度={finalSpeed}");
 			}
 		}
 
