@@ -68,8 +68,8 @@ public partial class SimulacrumTower : BattleMap
 
 	private void UpdateUI()
 	{
-		_floorLabel.Text = $"模拟回廊 - 第 {_currentFloor}/{_maxFloors} 层";
-		_modifierLabel.Text = $"当前词条: {_currentModifier}";
+		_floorLabel.Text = $"Simulacrum Tower - {_currentFloor}/{_maxFloors} floors";
+		_modifierLabel.Text = $"current modifiers: {_currentModifier}";
 	}
 
 	private void ApplyFloorModifier()
@@ -83,7 +83,7 @@ public partial class SimulacrumTower : BattleMap
 		// 每5层生成一个Boss
 		if (_currentFloor % 5 == 0)
 		{
-			string[] bosses = { "MandraBoss", "BoarKingBoss", "SearingExarch", "EaterOfWorlds" };
+			string[] bosses = { "MandraBoss", "BoarKingBoss" };
 			string randomBoss = bosses[GD.RandRange(0, bosses.Length - 1)];
 			SpawnBoss(randomBoss);
 		}

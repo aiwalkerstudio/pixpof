@@ -43,8 +43,6 @@ public partial class BossRush : BattleMap
 		{
 			"MandraBoss",
 			"BoarKingBoss",
-			"SearingExarch",
-			"EaterOfWorlds"
 		};
 	}
 
@@ -67,7 +65,7 @@ public partial class BossRush : BattleMap
 
 	private void UpdateUI()
 	{
-		_waveLabel.Text = $"Boss Rush - 第 {_currentWave}/{_maxWaves} 波";
+		_waveLabel.Text = $"Boss Rush - {_currentWave}/{_maxWaves} Wave";
 	}
 
 	protected override void OnBossDefeated()

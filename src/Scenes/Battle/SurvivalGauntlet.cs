@@ -63,13 +63,13 @@ public partial class SurvivalGauntlet : BattleMap
 	private void UpdateUI()
 	{
 		float remainingTime = _survivalTime - _currentTime;
-		_timeLabel.Text = $"剩余时间: {remainingTime:F1}秒";
-		_scoreLabel.Text = $"击败Boss数: {_bossesDefeated}";
+		_timeLabel.Text = $"remaining time: {remainingTime:F1} s";
+		_scoreLabel.Text = $"bosses defeated: {_bossesDefeated}";
 	}
 
 	private void SpawnRandomBoss()
 	{
-		string[] bosses = { "MandraBoss", "BoarKingBoss", "SearingExarch", "EaterOfWorlds" };
+		string[] bosses = { "MandraBoss", "BoarKingBoss" };
 		string randomBoss = bosses[GD.RandRange(0, bosses.Length - 1)];
 		
 		// 随机位置
