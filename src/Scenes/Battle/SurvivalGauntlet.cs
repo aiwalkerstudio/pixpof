@@ -62,7 +62,8 @@ public partial class SurvivalGauntlet : BattleMap
 
 	private void UpdateUI()
 	{
-		float remainingTime = _survivalTime - _currentTime;
+		// 确保剩余时间不为负数
+		float remainingTime = Mathf.Max(_survivalTime - _currentTime, 0);
 		_timeLabel.Text = $"remaining time: {remainingTime:F1} s";
 		_scoreLabel.Text = $"bosses defeated: {_bossesDefeated}";
 	}
@@ -76,15 +77,43 @@ public partial class SurvivalGauntlet : BattleMap
 		float x = (float)GD.RandRange(200, 800);
 		float y = (float)GD.RandRange(150, 450);
 		
-		SpawnBoss(randomBoss);
+		SpawnBoss(randomBoss, new Vector2(x, y));
 	}
 
 	private void Victory()
 	{
+		// 停止生成Boss
 		_bossSpawnTimer.Stop();
+		
+		// 清理所有Boss
+		for (int i = _bosses.Count - 1; i >= 0; i--)
+		{
+			var boss = _bosses[i];
+			if (IsInstanceValid(boss))
+			{
+				boss.QueueFree();
+			}
+		}
+		_bosses.Clear();
+		
+		// 清理所有怪物
+		for (int i = _activeMonsters.Count - 1; i >= 0; i--)
+		{
+			var monster = _activeMonsters[i];
+			if (IsInstanceValid(monster))
+			{
+				monster.QueueFree();
+			}
+		}
+		_activeMonsters.Clear();
+		
 		GD.Print($"生存挑战成功! 击败Boss数: {_bossesDefeated}");
-		// TODO: 添加奖励
+		
+		// 发送完成信号
 		EmitSignal(SignalName.BattleCompleted);
+		
+		// 清理自身
+		QueueFree();
 	}
 
 	protected override void OnBossDefeated()

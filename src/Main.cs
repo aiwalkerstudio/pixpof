@@ -190,15 +190,30 @@ public partial class Main : Node
 				// 显示玩家和UI
 				_player.Show();
 				_battleUI.Show();
+				
+				GD.Print($"Battle scene {battleType} loaded and initialized");
 			}
+		}
+		else
+		{
+			GD.PrintErr($"Failed to load battle scene: {battleType}");
 		}
 	}
 
 	private void OnBattleCompleted()
 	{
+		GD.Print("Battle completed, returning to main menu");
+		
 		// 隐藏玩家和UI
-		_player.Hide();
-		_battleUI.Hide();
+		if (IsInstanceValid(_player))
+		{
+			_player.Hide();
+		}
+		
+		if (IsInstanceValid(_battleUI))
+		{
+			_battleUI.Hide();
+		}
 		
 		// 返回主菜单
 		_mainMenu.Show();

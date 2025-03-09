@@ -38,13 +38,33 @@ public partial class BattleMap : Node2D
 	}
 
 	// 新增：由Main调用的初始化方法
-	public void Initialize(Game.Player player, BattleUI battleUI)  // 修改参数类型
+	public void Initialize(Game.Player player, BattleUI battleUI)
 	{
 		_player = player;
 		_battleUI = battleUI;
 
 		// 初始化战斗场景
 		InitializeBattle();
+		
+		// 连接玩家和UI的信号
+		if (_player != null && _battleUI != null)
+		{
+			// 连接玩家的生命值变化信号到UI
+			_player.HealthChanged += _battleUI.UpdateHealth;
+			
+			// 连接UI按钮到玩家
+			_battleUI.AttackPressed += _player.OnAttackPressed;
+			_battleUI.SkillPressed += _player.OnSkillPressed;
+			
+			// 立即更新UI显示当前生命值
+			_battleUI.UpdateHealth(_player.CurrentHealth, _player.MaxHealth);
+			
+			GD.Print($"Connected player signals to UI. Player health: {_player.CurrentHealth}/{_player.MaxHealth}");
+		}
+		else
+		{
+			GD.PrintErr("Failed to connect player signals: player or UI is null");
+		}
 	}
 
 	private void InitializeBattle()
@@ -52,36 +72,36 @@ public partial class BattleMap : Node2D
 		try
 		{
 			// 生成玩家
-			SpawnPlayer();
+			// SpawnPlayer();
 			
 			// 生成怪物
-			SpawnMonsters();
+			// SpawnMonsters();
 
-			// 加载曼陀罗Boss场景
-			var mandraBossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
-			if (mandraBossScene != null)
-			{
-				var mandraBoss = mandraBossScene.Instantiate<MandraBoss>();
-				SpawnBoss(mandraBoss, "曼陀罗Boss", new Vector2(700, 200));
-				_bosses.Add(mandraBoss);
-			}
-			else
-			{
-				GD.PrintErr("Failed to load MandraBoss scene!");
-			}
+			// // 加载曼陀罗Boss场景
+			// var mandraBossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/MandraBoss.tscn");
+			// if (mandraBossScene != null)
+			// {
+			// 	var mandraBoss = mandraBossScene.Instantiate<MandraBoss>();
+			// 	SpawnBoss(mandraBoss, "曼陀罗Boss", new Vector2(700, 200));
+			// 	_bosses.Add(mandraBoss);
+			// }
+			// else
+			// {
+			// 	GD.PrintErr("Failed to load MandraBoss scene!");
+			// }
 
-			// 加载野猪王Boss场景
-			var boarBossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/BoarKingBoss.tscn");
-			if (boarBossScene != null)
-			{
-				var boarBoss = boarBossScene.Instantiate<BoarKingBoss>();
-				SpawnBoss(boarBoss, "野猪王Boss", new Vector2(900, 400));
-				_bosses.Add(boarBoss);
-			}
-			else
-			{
-				GD.PrintErr("Failed to load BoarKingBoss scene!");
-			}
+			// // 加载野猪王Boss场景
+			// var boarBossScene = GD.Load<PackedScene>("res://scenes/enemies/boss/BoarKingBoss.tscn");
+			// if (boarBossScene != null)
+			// {
+			// 	var boarBoss = boarBossScene.Instantiate<BoarKingBoss>();
+			// 	SpawnBoss(boarBoss, "野猪王Boss", new Vector2(900, 400));
+			// 	_bosses.Add(boarBoss);
+			// }
+			// else
+			// {
+			// 	GD.PrintErr("Failed to load BoarKingBoss scene!");
+			// }
 
 			// SpawnBoss("SearingExarch");
 			// SpawnBoss("EaterOfWorlds");
@@ -252,6 +272,7 @@ public partial class BattleMap : Node2D
 		boss.GlobalPosition = position;
 		
 		_monsters.AddChild(boss);
+		_bosses.Add(boss);
 		GD.Print($"{bossName} spawned at {position}");
 
 		// 连接Boss信号
@@ -277,7 +298,7 @@ public partial class BattleMap : Node2D
 	}
 
 	// 生成BOSS
-	public void SpawnBoss(string bossName)
+	public void SpawnBoss(string bossName, Vector2 position)
 	{
 		try
 		{
@@ -289,15 +310,10 @@ public partial class BattleMap : Node2D
 				_monsters.AddChild(boss);
 				_bosses.Add(boss);
 				
-				// 设置生成位置
-				if(BossSpawnPoint != null)
-				{
-					boss.GlobalPosition = BossSpawnPoint.GlobalPosition;
-				}
-				else
-				{
-					GD.PrintErr($"BossSpawnPoint is null when spawning {bossName}");
-				}
+				// 使用传入的position设置生成位置
+				boss.GlobalPosition = position;
+				
+				GD.Print($"Spawned {bossName} at position {position}");
 			}
 			else
 			{
@@ -308,5 +324,44 @@ public partial class BattleMap : Node2D
 		{
 			GD.PrintErr($"Error spawning boss {bossName}: {e.Message}\n{e.StackTrace}");
 		}
+	}
+
+	// 添加新方法处理玩家死亡
+	public void OnPlayerDied()
+	{
+		GD.Print("Player died, ending battle...");
+		
+		// 清理所有Boss和怪物
+		for (int i = _bosses.Count - 1; i >= 0; i--)
+		{
+			var boss = _bosses[i];
+			if (IsInstanceValid(boss))
+			{
+				boss.QueueFree();
+			}
+		}
+		_bosses.Clear();
+		
+		for (int i = _activeMonsters.Count - 1; i >= 0; i--)
+		{
+			var monster = _activeMonsters[i];
+			if (IsInstanceValid(monster))
+			{
+				monster.QueueFree();
+			}
+		}
+		_activeMonsters.Clear();
+		
+		// 发送战斗结束信号
+		EmitSignal(SignalName.BattleCompleted);
+		
+		// 延迟清理场景，确保信号发送完成
+		var timer = GetTree().CreateTimer(0.1f);
+		timer.Connect("timeout", new Callable(this, nameof(CleanupScene)));
+	}
+
+	private void CleanupScene()
+	{
+		QueueFree();
 	}
 } 

@@ -60,7 +60,7 @@ public partial class BossRush : BattleMap
 
 		// 生成当前波次的Boss
 		string bossName = _bossSequence[_currentWave % _bossSequence.Count];
-		SpawnBoss(bossName);
+		SpawnBoss(bossName, new Vector2(700, 200));
 	}
 
 	private void UpdateUI()
@@ -89,8 +89,34 @@ public partial class BossRush : BattleMap
 
 	private void Victory()
 	{
+		// 清理所有Boss
+		for (int i = _bosses.Count - 1; i >= 0; i--)
+		{
+			var boss = _bosses[i];
+			if (IsInstanceValid(boss))
+			{
+				boss.QueueFree();
+			}
+		}
+		_bosses.Clear();
+		
+		// 清理所有怪物
+		for (int i = _activeMonsters.Count - 1; i >= 0; i--)
+		{
+			var monster = _activeMonsters[i];
+			if (IsInstanceValid(monster))
+			{
+				monster.QueueFree();
+			}
+		}
+		_activeMonsters.Clear();
+		
 		GD.Print($"Boss Rush完成! 总波数: {_currentWave}");
-		// TODO: 添加奖励
+		
+		// 发送完成信号
 		EmitSignal(SignalName.BattleCompleted);
+		
+		// 清理自身
+		QueueFree();
 	}
 } 

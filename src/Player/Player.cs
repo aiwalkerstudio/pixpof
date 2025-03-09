@@ -105,6 +105,9 @@ namespace Game
 			set => _intelligence = value;
 		} 
 
+		[Signal]
+		public delegate void HealthChangedEventHandler(float currentHealth, float maxHealth);
+
 		public override void _Ready()
 		{
 			AddToGroup("Player");
@@ -358,6 +361,8 @@ namespace Game
 			_skillSlot?.OnHit(this);
 			
 			//GD.Print($"Player受到{damage}点伤害，当前生命值: {CurrentHealth}, 能量护盾: {_currentEnergyShield}");
+
+			EmitSignal(SignalName.HealthChanged, CurrentHealth, MaxHealth);
 		}
 
 		private void UpdateHealthUI()
@@ -369,8 +374,22 @@ namespace Game
 		private void Die()
 		{
 			_class?.OnDeath(this);
-			// 处理死亡逻辑
-			// GD.Print($"玩家死亡,当前金币: {_gold}");
+			
+			// 发送死亡信号给战斗场景
+			EmitSignal(SignalName.HealthChanged, 0, MaxHealth);
+			
+			// 隐藏表情
+			if (_playerEmoji != null)
+			{
+				_playerEmoji.QueueFree();
+				_playerEmoji = null;
+			}
+			
+			// 通知父节点玩家死亡
+			GetParent()?.Call("OnPlayerDied");
+			
+			// 清理自身
+			QueueFree();
 		}
 
 		public void OnAttackPressed()
@@ -492,6 +511,12 @@ namespace Game
 			}
 			Gold += amount;  // 使用属性以触发信号
 			GD.Print($"获得金币: {amount}, 当前总金币: {_gold}");
+		}
+
+		public void Heal(float amount)
+		{
+			_currentHealth = Mathf.Min(_currentHealth + amount, MaxHealth);
+			EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);
 		}
 	}
 }
