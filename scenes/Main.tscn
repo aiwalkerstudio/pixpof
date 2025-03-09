@@ -1,8 +1,88 @@
-[gd_scene load_steps=2 format=3 uid="uid://b3k8xu1xw45qm"]
+[gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://src/Main.cs" id="1_main"]
+[ext_resource type="Script" path="res://src/Main.cs" id="1_abcd1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2_efgh2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/battle/BattleUI.tscn" id="3_ijkl3"]
 
 [node name="Main" type="Node"]
-script = ExtResource("1_main")
+script = ExtResource("1_abcd1")
 
 [node name="UI" type="CanvasLayer" parent="."]
+
+[node name="MainMenu" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="UI/MainMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="UI/MainMenu"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 48
+text = "Pixel Path of Fighter"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MainMenu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="SurvivalButton" type="Button" parent="UI/MainMenu/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Survival Gauntlet"
+
+[node name="SimulacrumButton" type="Button" parent="UI/MainMenu/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Simulacrum Tower"
+
+[node name="BossRushButton" type="Button" parent="UI/MainMenu/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Boss Rush"
+
+[node name="LanguageButton" type="Button" parent="UI/MainMenu"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 60.0
+grow_horizontal = 0
+text = "Switch to Chinese"
+
+[node name="Player" parent="." instance=ExtResource("2_efgh2")]
+visible = false
+
+[node name="BattleUI" parent="UI" instance=ExtResource("3_ijkl3")]
+visible = false

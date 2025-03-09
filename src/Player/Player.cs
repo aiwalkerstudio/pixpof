@@ -202,7 +202,7 @@ namespace Game
 			if (velocity != Vector2.Zero)
 			{
 				velocity = velocity.Normalized() * _moveSpeed;
-				GD.Print($"计算移动速度: 方向={velocity.Normalized()}, 速度={_moveSpeed}, 最终速度={velocity}");
+				//GD.Print($"计算移动速度: 方向={velocity.Normalized()}, 速度={_moveSpeed}, 最终速度={velocity}");
 			}
 			
 			Velocity = velocity;

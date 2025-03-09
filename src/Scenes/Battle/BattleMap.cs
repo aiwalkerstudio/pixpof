@@ -9,22 +9,22 @@ using Game.UI.Battle;  // 添加命名空间引用
 
 public partial class BattleMap : Node2D
 {
-	private Node2D _monsters;
-	private List<Monster> _activeMonsters = new();
-	private Game.Player _player;  // 使用完整的命名空间路径
-	private BattleUI _battleUI;
-	private List<Enemy> _bosses = new();  // 改为Boss列表
+	protected Node2D _monsters;
+	protected List<Monster> _activeMonsters = new();
+	protected Game.Player _player;  // 使用完整的命名空间路径
+	protected BattleUI _battleUI;
+	protected List<Enemy> _bosses = new();  // 改为Boss列表
 
 	// 添加BOSS预制体引用
 	[Export] 
-	private PackedScene EaterOfWorldsScene;
+	protected PackedScene EaterOfWorldsScene;
 	
 	[Export]
-	private PackedScene SearingExarchScene;
+	protected PackedScene SearingExarchScene;
 
 	// BOSS生成点
 	[Export] 
-	private Node2D BossSpawnPoint;
+	protected Node2D BossSpawnPoint;
 
 	[Signal]
 	public delegate void BattleCompletedEventHandler();
@@ -137,7 +137,7 @@ public partial class BattleMap : Node2D
 		}
 	}
 
-	private void SpawnMonsterAtPosition(string monsterType, Vector2 position)
+	protected void SpawnMonsterAtPosition(string monsterType, Vector2 position)
 	{
 		try
 		{
@@ -186,8 +186,7 @@ public partial class BattleMap : Node2D
 		return true;
 	}
 
-	// 获取随机生成位置
-	private Vector2 GetRandomSpawnPosition()
+	protected Vector2 GetRandomSpawnPosition()
 	{
 		for (int i = 0; i < 10; i++)  // 最多尝试10次
 		{
@@ -266,7 +265,7 @@ public partial class BattleMap : Node2D
 		}
 	}
 
-	private void OnBossDefeated()
+	protected virtual void OnBossDefeated()
 	{
 		// 检查是否所有Boss都被击败
 		_bosses.RemoveAll(boss => !IsInstanceValid(boss));
