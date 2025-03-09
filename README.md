@@ -48,6 +48,39 @@ Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of 
 ## How to play
 [How to play](syteamDoc/howtoplay.md)
 
+## Development Dependencies
+
+### 1. .NET SDK - Microsoft's Magic Toolkit 🎁
+The essential foundation for C# development:
+
+- **Why you need it:**
+  - Required for running C# programs
+  - Necessary for Godot Mono version
+  - Provides cross-platform development tools
+
+- **Installation:**
+  - **Windows:**
+    1. Visit https://dotnet.microsoft.com/download
+    2. Click "Download .NET SDK"
+    3. Run the installer and follow instructions
+  - **macOS:**
+    1. Visit https://dotnet.microsoft.com/download and install
+    2. Or use Homebrew: `brew install dotnet@4.6.2`
+
+### 2. Godot Mono IDE - Swiss Army Knife for Game Development 🎮
+The perfect game engine for beginners and professionals alike:
+
+- **Why choose Godot:**
+  - Free and open-source
+  - Supports both 2D and 3D development
+  - Cross-platform deployment (PC, mobile, web)
+  - Enhanced with C# support
+
+- **Installation:**
+  1. Visit https://godotengine.org/download/
+  2. Download "Godot Engine - .NET 4.4" for your platform
+  3. Extract (Windows) or install (macOS) as needed
+
 ## Contributing
 
 We welcome contributions from the community! Here's how you can help:
