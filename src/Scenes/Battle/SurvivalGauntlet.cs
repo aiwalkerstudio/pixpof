@@ -5,7 +5,7 @@ using Game.Enemies.Boss;
 
 public partial class SurvivalGauntlet : BattleMap
 {
-	private float _survivalTime = 120.0f; // 2分钟
+	private float _survivalTime = 60.0f; // 1分钟
 	private float _currentTime = 0f;
 	private int _bossesDefeated = 0;
 	private Timer _bossSpawnTimer;
