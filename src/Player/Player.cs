@@ -108,6 +108,23 @@ namespace Game
 		[Signal]
 		public delegate void HealthChangedEventHandler(float currentHealth, float maxHealth);
 
+		[Signal]
+		public delegate void ShieldChangedEventHandler(float currentShield, float maxShield);
+
+		public float CurrentEnergyShield
+		{
+			get => _currentEnergyShield;
+			set
+			{
+				if (_currentEnergyShield != value)
+				{
+					_currentEnergyShield = value;
+					EmitSignal(SignalName.ShieldChanged, _currentEnergyShield, MaxEnergyShield);
+					GD.Print($"Player shield changed: {_currentEnergyShield}/{MaxEnergyShield}");
+				}
+			}
+		}
+
 		public override void _Ready()
 		{
 			AddToGroup("Player");
@@ -305,8 +322,8 @@ namespace Game
 			var battleUI = GetNode<BattleUI>("/root/Main/UI/BattleUI");
 			if (battleUI != null)
 			{
-				battleUI.UpdateHealth(CurrentHealth, MaxHealth);
-				battleUI.UpdateMana(CurrentMana, MaxMana);  // 更新魔法值显示
+				// 只更新魔法值，因为生命值和护盾通过信号更新
+				battleUI.UpdateMana(CurrentMana, MaxMana);
 			}
 		}
 
@@ -318,57 +335,31 @@ namespace Game
 			{
 				float shieldDamage = Mathf.Min(damage, _currentEnergyShield);
 				_currentEnergyShield -= shieldDamage;
+				EmitSignal(SignalName.ShieldChanged, _currentEnergyShield, MaxEnergyShield);
+				GD.Print($"Player受到{damage}点伤害! EnergyShield: {shieldDamage} -> {_currentEnergyShield}");
 				damage -= shieldDamage;
 			}
 			
 			// 剩余伤害扣除生命值
 			if (damage > 0)
 			{
-				float oldHealth = CurrentHealth;
-				CurrentHealth = Mathf.Max(0, CurrentHealth - damage);
-				
-				//GD.Print($"Player受到{damage}点伤害! 血量: {oldHealth} -> {CurrentHealth}");
-				
-				// 添加空检查
-				if (_skillSlot == null)
-				{
-					GD.PrintErr("Cannot trigger skill: SkillSlot is null!");
-					return;
-				}
+				_currentHealth -= damage;
+				_currentHealth = Mathf.Max(_currentHealth, 0);
+				EmitSignal(SignalName.HealthChanged, _currentHealth, MaxHealth);
+				GD.Print($"Player受到{damage}点伤害! Health: {_currentHealth}/{MaxHealth}");
 				
 				// 检查是否触发受伤技能
-				if (damage >= OnHitSkillThreshold)
+				if (damage >= OnHitSkillThreshold && _skillSlot != null)
 				{
-					//GD.Print($"伤害({damage})超过阈值({OnHitSkillThreshold})，触发受伤技能!");
 					_skillSlot.OnHit(this);
 				}
-				else
-				{
-					//GD.Print($"伤害({damage})未达到阈值({OnHitSkillThreshold})，不触发技能");
-				}
-
-				// 更新UI显示
-				UpdateHealthUI();
-
-				// 检查死亡
-				if (CurrentHealth <= 0)
+				
+				// 检查是否死亡
+				if (_currentHealth <= 0)
 				{
 					Die();
 				}
 			}
-
-			// 触发受伤事件
-			_skillSlot?.OnHit(this);
-			
-			//GD.Print($"Player受到{damage}点伤害，当前生命值: {CurrentHealth}, 能量护盾: {_currentEnergyShield}");
-
-			EmitSignal(SignalName.HealthChanged, CurrentHealth, MaxHealth);
-		}
-
-		private void UpdateHealthUI()
-		{
-			// TODO: 更新血量UI显示
-			//GD.Print($"Player Health: {CurrentHealth}/{MaxHealth}");
 		}
 
 		private void Die()
@@ -387,26 +378,37 @@ namespace Game
 				_playerEmoji = null;
 			}
 			
-			// 通知父节点玩家死亡
-			var parent = GetParent();
-			if (parent != null)
+			// 查找BattleMap节点
+			var battleMap = GetTree().Root.GetNode<BattleMap>("Main/SimulacrumTower");
+			if (battleMap != null)
 			{
-				GD.Print($"Notifying parent node: {parent.Name} about player death");
-				parent.Call("OnPlayerDied");
-				
-				// 延迟清理自身
-				var timer = GetTree().CreateTimer(0.1f);
-				timer.Timeout += () =>
-				{
-					GD.Print("Player cleaning up...");
-					QueueFree();
-					GD.Print("Player cleaned up");
-				};
+				GD.Print($"Found battle map: {battleMap.Name}, notifying about player death");
+				battleMap.OnPlayerDied();
 			}
 			else
 			{
-				GD.PrintErr("Player parent node not found!");
+				GD.Print("Could not find BattleMap directly, trying through Main");
+				// 通过Main节点查找
+				var main = GetNode<Node>("/root/Main");
+				if (main != null)
+				{
+					GD.Print($"Found Main node, calling OnPlayerDied");
+					main.Call("OnPlayerDied");
+				}
+				else
+				{
+					GD.PrintErr("Could not find Main node!");
+				}
 			}
+			
+			// 延迟清理自身
+			var timer = GetTree().CreateTimer(0.1f);
+			timer.Timeout += () =>
+			{
+				GD.Print("Player cleaning up...");
+				QueueFree();
+				GD.Print("Player cleaned up");
+			};
 		}
 
 		public void OnAttackPressed()
@@ -484,7 +486,12 @@ namespace Game
 
 		public void AddEnergyShield(float amount)
 		{
+			// 直接修改字段
 			_currentEnergyShield = Mathf.Min(_currentEnergyShield + amount, MaxEnergyShield);
+			
+			// 发送一次信号
+			EmitSignal(SignalName.ShieldChanged, _currentEnergyShield, MaxEnergyShield);
+			
 			GD.Print($"Energy Shield: {_currentEnergyShield}/{MaxEnergyShield}");
 		}
 

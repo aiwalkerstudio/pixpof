@@ -52,14 +52,18 @@ public partial class BattleMap : Node2D
 			// 连接玩家的生命值变化信号到UI
 			_player.HealthChanged += _battleUI.UpdateHealth;
 			
+			// 连接玩家的护盾值变化信号到UI
+			_player.ShieldChanged += _battleUI.UpdateShield;
+			
 			// 连接UI按钮到玩家
 			_battleUI.AttackPressed += _player.OnAttackPressed;
 			_battleUI.SkillPressed += _player.OnSkillPressed;
 			
-			// 立即更新UI显示当前生命值
+			// 立即更新UI显示当前生命值和护盾值
 			_battleUI.UpdateHealth(_player.CurrentHealth, _player.MaxHealth);
+			_battleUI.UpdateShield(_player.CurrentEnergyShield, _player.MaxEnergyShield);
 			
-			GD.Print($"Connected player signals to UI. Player health: {_player.CurrentHealth}/{_player.MaxHealth}");
+			GD.Print($"Connected player signals to UI. Player health: {_player.CurrentHealth}/{_player.MaxHealth}, Shield: {_player.CurrentEnergyShield}/{_player.MaxEnergyShield}");
 		}
 		else
 		{

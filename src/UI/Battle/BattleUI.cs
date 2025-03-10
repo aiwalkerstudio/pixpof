@@ -7,6 +7,7 @@ namespace Game.UI.Battle
 	{
 		private ProgressBar _healthBar;
 		private ProgressBar _manaBar;
+		private ProgressBar _shieldBar;
 		private HBoxContainer _buffContainer;
 		private Control _skillBar;
 		private Button _attackButton;
@@ -30,6 +31,8 @@ namespace Game.UI.Battle
 			// 获取节点引用
 			_healthBar = GetNode<ProgressBar>("StatusBar/HealthBar");
 			_manaBar = GetNode<ProgressBar>("StatusBar/ManaBar");
+			_shieldBar = GetNode<ProgressBar>("StatusBar/ShieldBar");
+
 			_buffContainer = GetNode<HBoxContainer>("StatusBar/BuffContainer");
 			_skillBar = GetNode<Control>("SkillBar");
 			_attackButton = GetNode<Button>("SkillBar/HBoxContainer/AttackButton");
@@ -72,8 +75,11 @@ namespace Game.UI.Battle
 			{
 				// 连接玩家信号
 				_player.GoldChanged += OnGoldChanged;
+				_player.ShieldChanged += UpdateShield; // 连接护盾变化信号
+				
 				// 立即更新显示
 				OnGoldChanged(_player.Gold);
+				UpdateShield(_player.CurrentEnergyShield, _player.MaxEnergyShield);
 			}
 		}
 
@@ -86,6 +92,8 @@ namespace Game.UI.Battle
 				_healthBar.MaxValue = _player.MaxHealth;
 				_manaBar.Value = _player.CurrentMana;
 				_manaBar.MaxValue = _player.MaxMana;
+				_shieldBar.Value = _player.CurrentEnergyShield;
+				_shieldBar.MaxValue = _player.MaxEnergyShield;
 				OnGoldChanged(_player.Gold);
 			}
 		}
@@ -100,6 +108,21 @@ namespace Game.UI.Battle
 		{
 			_manaBar.MaxValue = max;
 			_manaBar.Value = current;
+		}
+
+		// 新增：更新护盾条
+		public void UpdateShield(float current, float max)
+		{
+			if (_shieldBar != null)
+			{
+				_shieldBar.MaxValue = max;
+				_shieldBar.Value = current;
+				
+				// 如果没有护盾，隐藏护盾条
+				_shieldBar.Visible = current > 0;
+				
+				// GD.Print($"Shield UI updated: {current}/{max}");
+			}
 		}
 
 		public void ShowDamage(Vector2 position, float amount)
