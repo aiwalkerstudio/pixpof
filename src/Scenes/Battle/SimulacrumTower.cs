@@ -289,6 +289,9 @@ public partial class SimulacrumTower : BattleMap
 		}
 		_activeMonsters.Clear();
 		
+		// 清理场景中的金币和卡兰德魔镜
+		CleanupDroppedItems();
+		
 		GD.Print($"模拟回廊通关! 总层数: {_currentFloor}");
 		
 		// 发送完成信号
@@ -296,6 +299,24 @@ public partial class SimulacrumTower : BattleMap
 		
 		// 清理自身
 		QueueFree();
+	}
+
+	// 修改CleanupDroppedItems方法
+	private void CleanupDroppedItems()
+	{
+		var currentScene = GetTree().CurrentScene;
+		if (currentScene == null) return;
+		
+		// 获取所有子节点
+		foreach (Node child in currentScene.GetChildren())
+		{
+			// 检查是否是金币或卡兰德魔镜
+			if (child is Game.Items.GoldDrop || child.Name.ToString().Contains("KalandraMirror"))
+			{
+				GD.Print($"清理掉落物: {child.Name}");
+				child.QueueFree();
+			}
+		}
 	}
 
 	protected new Vector2 GetRandomSpawnPosition()
@@ -478,5 +499,41 @@ public partial class SimulacrumTower : BattleMap
 			GD.Print("进入下一层");
 			CallDeferred(nameof(DelayedStartNextFloor));
 		}
+	}
+
+	public override void OnPlayerDied()
+	{
+		GD.Print("Player died in SimulacrumTower, cleaning up...");
+		
+		// 清理所有Boss和怪物
+		for (int i = _bosses.Count - 1; i >= 0; i--)
+		{
+			var boss = _bosses[i];
+			if (IsInstanceValid(boss))
+			{
+				boss.QueueFree();
+			}
+		}
+		_bosses.Clear();
+		
+		for (int i = _activeMonsters.Count - 1; i >= 0; i--)
+		{
+			var monster = _activeMonsters[i];
+			if (IsInstanceValid(monster))
+			{
+				monster.QueueFree();
+			}
+		}
+		_activeMonsters.Clear();
+		
+		// 清理场景中的金币和卡兰德魔镜
+		CleanupDroppedItems();
+		
+		// 发送战斗结束信号
+		EmitSignal(SignalName.BattleCompleted);
+		
+		// 延迟清理场景，确保信号发送完成
+		var timer = GetTree().CreateTimer(0.1f);
+		timer.Connect("timeout", new Callable(this, nameof(CleanupScene)));
 	}
 } 

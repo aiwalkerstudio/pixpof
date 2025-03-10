@@ -342,7 +342,7 @@ public partial class BattleMap : Node2D
 	}
 
 	// 添加新方法处理玩家死亡
-	public void OnPlayerDied()
+	public virtual void OnPlayerDied()
 	{
 		GD.Print("Player died, ending battle...");
 		
@@ -375,7 +375,7 @@ public partial class BattleMap : Node2D
 		timer.Connect("timeout", new Callable(this, nameof(CleanupScene)));
 	}
 
-	private void CleanupScene()
+	protected void CleanupScene()
 	{
 		QueueFree();
 	}
