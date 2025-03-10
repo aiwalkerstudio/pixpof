@@ -16,7 +16,7 @@ namespace Game.Enemies
 		[Export]
 		public float AttackRange { get; set; } = 50.0f;
 		
-		protected float CurrentHealth { get; set; }
+		public float CurrentHealth { get; protected set; }
 		
 		public override void _Ready()
 		{
@@ -67,6 +67,11 @@ namespace Game.Enemies
 		protected virtual void UpdateAI(double delta)
 		{
 			// 子类实现具体的AI逻辑
+		}
+		
+		public bool IsDead()
+		{
+			return CurrentHealth <= 0 || !IsInstanceValid(this);
 		}
 	}
 } 

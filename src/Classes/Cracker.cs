@@ -13,7 +13,7 @@ namespace Game.Classes
 			BaseAgility = 10;
 			BaseIntelligence = 8;
 			BaseHealth = 100;
-			BaseMana = 80;
+			BaseMana = 800000;
 			BaseGold = 100000;
 		}
 

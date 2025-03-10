@@ -27,7 +27,7 @@ namespace Game.Items
 			// 连接信号
 			BodyEntered += OnBodyEntered;
 			
-			GD.Print($"GoldDrop created: Amount={Amount}, Position={GlobalPosition}");
+			//GD.Print($"GoldDrop created: Amount={Amount}, Position={GlobalPosition}");
 		}
 
 		private void SetupCollision()
@@ -113,8 +113,8 @@ namespace Game.Items
 		{
 			if (body is Game.Player player)
 			{
-				GD.Print($"GoldDrop detected collision with: {body.Name}");
-				GD.Print($"Player collected gold: {Amount}");
+				//GD.Print($"GoldDrop detected collision with: {body.Name}");
+				//GD.Print($"Player collected gold: {Amount}");
 				
 				// 将 AddGold 改为 CollectGold
 				player.CollectGold(Amount);

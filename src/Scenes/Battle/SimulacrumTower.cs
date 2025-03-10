@@ -326,4 +326,159 @@ public partial class SimulacrumTower : BattleMap
 		
 		return new Vector2(x, y);
 	}
+
+	protected override void OnBossDefeated()
+	{
+		base.OnBossDefeated();
+		
+		GD.Print($"Boss被击败! 当前层数: {_currentFloor}/{_maxFloors}, 剩余Boss数: {_bosses.Count}");
+		
+		// 打印所有Boss的状态
+		for (int i = 0; i < _bosses.Count; i++)
+		{
+			var boss = _bosses[i];
+			GD.Print($"Boss[{i}] IsValid: {IsInstanceValid(boss)}, ID: {(IsInstanceValid(boss) ? boss.GetInstanceId().ToString() : "无效")}");
+		}
+		
+		// 手动移除已死亡的Boss
+		for (int i = _bosses.Count - 1; i >= 0; i--)
+		{
+			var boss = _bosses[i];
+			if (!IsInstanceValid(boss))
+			{
+				GD.Print($"移除已死亡的Boss: {i}");
+				_bosses.RemoveAt(i);
+			}
+		}
+		
+		GD.Print($"清理后剩余Boss数: {_bosses.Count}");
+		
+		// 如果没有Boss了，检查是否可以进入下一层
+		if (_bosses.Count == 0 && _activeMonsters.Count == 0)
+		{
+			GD.Print("所有Boss和怪物都被击败，准备进入下一层");
+			
+			// 检查是否已经完成所有层级
+			if (_currentFloor >= _maxFloors)
+			{
+				GD.Print("已完成所有层级，发送战斗完成信号");
+				Victory();
+				return;
+			}
+			
+			// 如果已经在过渡到下一层，直接返回
+			if (_isTransitioningToNextFloor)
+			{
+				GD.Print("已经在过渡到下一层，忽略重复调用");
+				return;
+			}
+			
+			// 设置过渡标志
+			_isTransitioningToNextFloor = true;
+			
+			// 进入下一层
+			GD.Print("进入下一层");
+			CallDeferred(nameof(DelayedStartNextFloor));
+		}
+	}
+
+	protected new void SpawnRandomBoss()
+	{
+		string[] bosses = { "MandraBoss", "BoarKingBoss" };
+		string randomBoss = bosses[GD.RandRange(0, bosses.Length - 1)];
+		
+		// 随机位置
+		float x = (float)GD.RandRange(400, 600);
+		float y = (float)GD.RandRange(250, 350);
+		Vector2 position = new Vector2(x, y);
+		
+		GD.Print($"尝试生成Boss: {randomBoss} 在位置 {position}");
+		
+		try
+		{
+			// 加载Boss场景
+			var bossScene = ResourceLoader.Load<PackedScene>($"res://scenes/enemies/boss/{randomBoss}.tscn");
+			if(bossScene != null)
+			{
+				var boss = bossScene.Instantiate<Enemy>();
+				_monsters.AddChild(boss);
+				_bosses.Add(boss);
+				
+				// 设置生成位置
+				boss.GlobalPosition = position;
+				
+				// 连接Boss的Died信号
+				boss.Died -= OnBossDied; // 先断开以防重复连接
+				boss.Died += OnBossDied;
+				GD.Print($"成功连接Boss的Died信号");
+				
+				// 确保连接Boss的BossDefeated信号
+				if (boss is MandraBoss mandraBoss)
+				{
+					mandraBoss.BossDefeated -= OnBossDefeated; // 先断开以防重复连接
+					mandraBoss.BossDefeated += OnBossDefeated;
+					GD.Print($"成功连接MandraBoss的BossDefeated信号");
+				}
+				else if (boss is BoarKingBoss boarBoss)
+				{
+					boarBoss.BossDefeated -= OnBossDefeated; // 先断开以防重复连接
+					boarBoss.BossDefeated += OnBossDefeated;
+					GD.Print($"成功连接BoarKingBoss的BossDefeated信号");
+				}
+				else
+				{
+					GD.PrintErr($"未知Boss类型: {boss.GetType()}");
+				}
+				
+				GD.Print($"成功生成Boss: {randomBoss} 在位置 {position}");
+			}
+			else
+			{
+				GD.PrintErr($"Failed to load {randomBoss} scene!");
+			}
+		}
+		catch (System.Exception e)
+		{
+			GD.PrintErr($"Error spawning boss {randomBoss}: {e.Message}\n{e.StackTrace}");
+		}
+	}
+
+	// 添加OnBossDied方法处理Boss的Died信号
+	private void OnBossDied(Enemy enemy)
+	{
+		GD.Print($"收到Boss的Died信号: {enemy.Name}, ID: {enemy.GetInstanceId()}");
+		
+		// 从_bosses列表中移除
+		_bosses.Remove(enemy);
+		
+		GD.Print($"Boss已从列表中移除，剩余Boss数: {_bosses.Count}");
+		
+		// 检查是否可以进入下一层
+		if (_bosses.Count == 0 && _activeMonsters.Count == 0)
+		{
+			GD.Print("所有Boss和怪物都被击败，准备进入下一层");
+			
+			// 检查是否已经完成所有层级
+			if (_currentFloor >= _maxFloors)
+			{
+				GD.Print("已完成所有层级，发送战斗完成信号");
+				Victory();
+				return;
+			}
+			
+			// 如果已经在过渡到下一层，直接返回
+			if (_isTransitioningToNextFloor)
+			{
+				GD.Print("已经在过渡到下一层，忽略重复调用");
+				return;
+			}
+			
+			// 设置过渡标志
+			_isTransitioningToNextFloor = true;
+			
+			// 进入下一层
+			GD.Print("进入下一层");
+			CallDeferred(nameof(DelayedStartNextFloor));
+		}
+	}
 } 

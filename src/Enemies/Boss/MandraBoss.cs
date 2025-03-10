@@ -251,6 +251,8 @@ namespace Game.Enemies.Boss
 
 		public override void Die()
 		{
+			GD.Print($"MandraBoss死亡! ID: {GetInstanceId()}");
+			
 			// 清理所有召唤物
 			foreach (var petal in _summonedPetals)
 			{
@@ -263,7 +265,8 @@ namespace Game.Enemies.Boss
 			// 发送Boss被击败信号
 			EmitSignal(SignalName.BossDefeated);
 			
-			base.Die();
+			// 确保从场景中移除
+			QueueFree();
 		}
 	}
 }
