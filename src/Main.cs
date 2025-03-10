@@ -39,7 +39,7 @@ public partial class Main : Node
 		AddChild(translationManager);
 		
 		// 创建玩家（先创建）
-		CreatePlayer();
+		// CreatePlayer();
 		
 		// 创建UI（后创建，并传入玩家引用）
 		// CreateUI();
@@ -129,7 +129,6 @@ public partial class Main : Node
 		GD.Print("Starting Survival Gauntlet...");
 		CreateUI();  // 创建UI
 		LoadBattleScene("SurvivalGauntlet");
-		_mainMenu.Hide();
 	}
 
 	private void OnSimulacrumPressed()
@@ -174,54 +173,103 @@ public partial class Main : Node
 
 	private void LoadBattleScene(string battleType)
 	{
-		// 加载战斗场景
-		var battleScene = GD.Load<PackedScene>($"res://scenes/battle/{battleType}.tscn");
-		if (battleScene != null)
+		GD.Print($"Loading battle scene: {battleType}");
+		
+		// 先隐藏主菜单
+		_mainMenu.Hide();
+		
+		// 清理旧的战斗场景
+		foreach (var child in GetChildren())
 		{
-			var battle = battleScene.Instantiate();
-			AddChild(battle);
-			
-			// 初始化战斗场景
-			if (battle is BattleMap battleMap)
+			if (child is BattleMap)
 			{
-				battleMap.Initialize(_player, _battleUI);
-				battleMap.BattleCompleted += OnBattleCompleted;
-				
-				// 显示玩家和UI
-				_player.Show();
-				_battleUI.Show();
-				
-				GD.Print($"Battle scene {battleType} loaded and initialized");
+				child.QueueFree();
+				GD.Print($"Removed old battle map: {child.Name}");
 			}
+		}
+		
+		// 创建新的战斗场景
+		PackedScene battleScene = null;
+		
+		switch (battleType)
+		{
+			case "SurvivalGauntlet":
+				battleScene = GD.Load<PackedScene>("res://scenes/battle/SurvivalGauntlet.tscn");
+				break;
+			case "SimulacrumTower":
+				battleScene = GD.Load<PackedScene>("res://scenes/battle/SimulacrumTower.tscn");
+				break;
+			case "BossRush":
+				battleScene = GD.Load<PackedScene>("res://scenes/battle/BossRush.tscn");
+				break;
+			default:
+				GD.PrintErr($"Unknown battle type: {battleType}");
+				return;
+		}
+		
+		if (battleScene == null)
+		{
+			GD.PrintErr($"Failed to load battle scene for type: {battleType}");
+			return;
+		}
+		
+		// 实例化战斗场景
+		var battleMap = battleScene.Instantiate<BattleMap>();
+		AddChild(battleMap);
+		
+		// 确保玩家可见
+		if (_player != null)
+		{
+			_player.Show();
+			_player.Position = new Vector2(500, 300); // 设置玩家初始位置
 		}
 		else
 		{
-			GD.PrintErr($"Failed to load battle scene: {battleType}");
+			GD.PrintErr("Player is null when loading battle scene!");
+			//CreatePlayer(); // 尝试重新创建玩家
 		}
+		
+		// 确保UI可见
+		if (_battleUI != null)
+		{
+			_battleUI.Show();
+		}
+		else
+		{
+			GD.PrintErr("BattleUI is null when loading battle scene!");
+			CreateUI(); // 尝试重新创建UI
+		}
+		
+		// 初始化战斗场景
+		battleMap.Initialize(_player, _battleUI);
+		
+		// 连接战斗完成信号
+		battleMap.BattleCompleted += OnBattleCompleted;
+		
+		GD.Print($"Battle scene loaded: {battleType}");
 	}
 
 	private void OnBattleCompleted()
 	{
-		GD.Print("Battle completed, returning to main menu");
+		GD.Print("Battle completed, returning to main menu...");
 		
-		// 隐藏玩家和UI
-		if (IsInstanceValid(_player))
-		{
-			_player.Hide();
-		}
-		
-		if (IsInstanceValid(_battleUI))
-		{
-			_battleUI.Hide();
-		}
-		
-		// 返回主菜单
-		_mainMenu.Show();
+		// 使用CallDeferred确保在当前帧结束后执行
+		CallDeferred(nameof(ShowMainMenu));
 	}
 
 	private void ShowMainMenu()
 	{
 		GD.Print("Showing main menu...");
+		
+		// 清理所有战斗场景
+		foreach (var child in GetChildren())
+		{
+			if (child is BattleMap)
+			{
+				child.QueueFree();
+				GD.Print($"Removed battle map: {child.Name}");
+			}
+		}
 		
 		// 隐藏玩家和UI
 		if (IsInstanceValid(_player))
