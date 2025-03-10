@@ -134,7 +134,7 @@ public partial class BattleMap : Node2D
 		}
 	}
 
-	private void SpawnMonsters()
+	protected void SpawnMonsters()
 	{
 		// 生成多个普通怪物
 		var monsterSpawns = new List<(string type, Vector2 position)>
@@ -173,10 +173,11 @@ public partial class BattleMap : Node2D
 				_monsters.AddChild(monster);
 				_activeMonsters.Add(monster);
 				
-				// 连接怪物信号
+				// 确保连接怪物信号
+				monster.Died -= OnMonsterDied; // 先断开以防重复连接
 				monster.Died += OnMonsterDied;
 				
-				GD.Print($"Spawned {monsterType} at position {position}");
+				GD.Print($"Spawned {monsterType} at position {position}, connected Died signal");
 			}
 			else
 			{
@@ -189,6 +190,18 @@ public partial class BattleMap : Node2D
 		}
 	}
 
+
+	protected void SpawnRandomBoss()
+	{
+		string[] bosses = { "MandraBoss", "BoarKingBoss" };
+		string randomBoss = bosses[GD.RandRange(0, bosses.Length - 1)];
+		
+		// 随机位置
+		float x = (float)GD.RandRange(200, 800);
+		float y = (float)GD.RandRange(150, 450);
+		
+		SpawnBoss(randomBoss, new Vector2(x, y));
+	}
 	// 添加一个方法来检查位置是否合适
 	private bool IsValidSpawnPosition(Vector2 position)
 	{
@@ -234,12 +247,10 @@ public partial class BattleMap : Node2D
 		if (enemy is Monster monster)
 		{
 			_activeMonsters.Remove(monster);
+			GD.Print($"BattleMap: 怪物死亡，剩余怪物数量: {_activeMonsters.Count}");
 			
-			// 检查战斗是否结束
-			if (_activeMonsters.Count == 0)
-			{
-				EmitSignal(SignalName.BattleCompleted);
-			}
+			// 检查是否所有怪物都被击败
+			CheckMonstersDefeated();
 		}
 	}
 
@@ -295,10 +306,10 @@ public partial class BattleMap : Node2D
 		// 检查是否所有Boss都被击败
 		_bosses.RemoveAll(boss => !IsInstanceValid(boss));
 		
-		if (_bosses.Count == 0 && _activeMonsters.Count == 0)
-		{
-			EmitSignal(SignalName.BattleCompleted);
-		}
+		// if (_bosses.Count == 0 && _activeMonsters.Count == 0)
+		// {
+		// 	EmitSignal(SignalName.BattleCompleted);
+		// }
 	}
 
 	// 生成BOSS
@@ -367,5 +378,22 @@ public partial class BattleMap : Node2D
 	private void CleanupScene()
 	{
 		QueueFree();
+	}
+
+	protected virtual void OnAllMonstersDefeated()
+	{
+		GD.Print("所有怪物已击败!");
+		
+		// 基类中的默认行为
+		// 可以在子类中重写此方法
+	}
+
+	protected void CheckMonstersDefeated()
+	{
+		if (_activeMonsters.Count == 0)
+		{
+			GD.Print("所有怪物已被击败!");
+			OnAllMonstersDefeated();
+		}
 	}
 } 

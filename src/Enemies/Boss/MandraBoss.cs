@@ -47,7 +47,7 @@ namespace Game.Enemies.Boss
 		public override void _Ready()
 		{
 			base._Ready();
-			MaxHealth = 10000000000000.0f;
+			MaxHealth = 200.0f;
 			AttackDamage = 25.0f;
 			CurrentHealth = MaxHealth;
 			

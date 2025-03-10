@@ -68,18 +68,6 @@ public partial class SurvivalGauntlet : BattleMap
 		_scoreLabel.Text = $"bosses defeated: {_bossesDefeated}";
 	}
 
-	private void SpawnRandomBoss()
-	{
-		string[] bosses = { "MandraBoss", "BoarKingBoss" };
-		string randomBoss = bosses[GD.RandRange(0, bosses.Length - 1)];
-		
-		// 随机位置
-		float x = (float)GD.RandRange(200, 800);
-		float y = (float)GD.RandRange(150, 450);
-		
-		SpawnBoss(randomBoss, new Vector2(x, y));
-	}
-
 	private void Victory()
 	{
 		// 停止生成Boss
