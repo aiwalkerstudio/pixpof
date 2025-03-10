@@ -6,7 +6,7 @@ using Game.Enemies.Boss;
 public partial class SimulacrumTower : BattleMap
 {
 	private int _currentFloor = 0;
-	private int _maxFloors = 15;
+	private int _maxFloors = 10;
 	private Label _floorLabel;
 	private Label _modifierLabel;
 	private string _currentModifier = "";
@@ -338,16 +338,14 @@ public partial class SimulacrumTower : BattleMap
 		{
 			var boss = _bosses[i];
 			GD.Print($"Boss[{i}] IsValid: {IsInstanceValid(boss)}, ID: {(IsInstanceValid(boss) ? boss.GetInstanceId().ToString() : "无效")}");
-		}
-		
-		// 手动移除已死亡的Boss
-		for (int i = _bosses.Count - 1; i >= 0; i--)
-		{
-			var boss = _bosses[i];
-			if (!IsInstanceValid(boss))
+			
+			// 手动销毁Boss
+			if (IsInstanceValid(boss))
 			{
-				GD.Print($"移除已死亡的Boss: {i}");
+				GD.Print($"手动销毁Boss: {i}");
+				boss.QueueFree();
 				_bosses.RemoveAt(i);
+				i--; // 调整索引
 			}
 		}
 		
