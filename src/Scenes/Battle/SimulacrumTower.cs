@@ -19,6 +19,9 @@ public partial class SimulacrumTower : BattleMap
 		"Increase skill cooldown by 50%"
 	};
 
+	// 添加标志位防止重复进入下一层
+	private bool _isTransitioningToNextFloor = false;
+
 	public override void _Ready()
 	{
 		base._Ready();
@@ -48,6 +51,8 @@ public partial class SimulacrumTower : BattleMap
 
 	private void StartNextFloor()
 	{
+		GD.Print($"开始加载第 {_currentFloor + 1} 层");
+		
 		_currentFloor++;
 		
 		// 更新UI显示
@@ -197,6 +202,13 @@ public partial class SimulacrumTower : BattleMap
 	{
 		GD.Print($"所有怪物已击败! 当前层数: {_currentFloor}/{_maxFloors}, 活跃怪物数: {_activeMonsters.Count}, Boss数: {_bosses.Count}");
 		
+		// 如果已经在过渡到下一层，直接返回
+		if (_isTransitioningToNextFloor)
+		{
+			GD.Print("已经在过渡到下一层，忽略重复调用");
+			return;
+		}
+		
 		// 检查是否还有Boss存活
 		if (_bosses.Count > 0)
 		{
@@ -212,12 +224,26 @@ public partial class SimulacrumTower : BattleMap
 			return;
 		}
 		
+		// 设置过渡标志
+		_isTransitioningToNextFloor = true;
+		
 		// 否则进入下一层
 		GD.Print("进入下一层");
 		
-		// 延迟一下再进入下一层，给玩家一些喘息时间
+		// 使用CallDeferred延迟到下一帧执行，避免在当前帧中修改场景树
+		CallDeferred(nameof(DelayedStartNextFloor));
+	}
+
+	// 添加延迟启动下一层的方法
+	private void DelayedStartNextFloor()
+	{
+		// 创建一次性计时器
 		var timer = GetTree().CreateTimer(2.0);
-		timer.Timeout += StartNextFloor;
+		timer.Timeout += () => {
+			StartNextFloor();
+			// 重置过渡标志
+			_isTransitioningToNextFloor = false;
+		};
 	}
 
 	private void OnMonsterDied(Enemy enemy)
