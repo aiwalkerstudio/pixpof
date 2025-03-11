@@ -8,7 +8,7 @@ Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of 
 
 ## Reddit AMA Verification
 Join my Reddit AMA discussion:  
-[2024-02-25 AMA on r/gamedev](https://www.reddit.com/r/gamedev/comments/1j8j5qt/i_built_an_opensource_pixel_arpg_game_using_godot/
+[2025-03-11 AMA on r/gamedev](https://www.reddit.com/r/gamedev/comments/1j8j5qt/i_built_an_opensource_pixel_arpg_game_using_godot/
 
 ### Key Features
 
