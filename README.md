@@ -6,9 +6,9 @@ A simplified 2D pixel-style action RPG inspired by Path of Exile, featuring stre
 
 Pixel Path of Fighter is a retro-style ARPG that combines the core mechanics of Path of Exile with pixel art aesthetics. The game aims to provide an accessible yet engaging experience for players who enjoy action RPGs but prefer a more straightforward approach.
 
-## 🔗 Upcoming AMA
-- Planned AMA on r/gamedev: March 11, 2025
-- Verification link will be updated here after posting  
+## Reddit AMA Verification
+Join my Reddit AMA discussion:  
+[2024-02-25 AMA on r/gamedev](https://www.reddit.com/r/gamedev/comments/1j8j5qt/i_built_an_opensource_pixel_arpg_game_using_godot/
 
 ### Key Features
 
